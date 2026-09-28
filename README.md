@@ -316,3 +316,8 @@ MVPでは自動の名寄せは行わず、ユーザーの手動確認で成立�
 
 ### 11. 画面遷移図
 https://www.figma.com/design/OVoMkVo7sP42IGpOz8vkdu/%25E7%2584%25A1%25E9%25A1%258C?node-id=0-1&t=yvyPlpt2W7tqh0wY-0
+
+ ---
+
+### 12. ER図
+https://dbdiagram.io/d/6aba5d105869425612b5ee58
