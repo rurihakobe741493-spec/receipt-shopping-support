@@ -1,0 +1,9 @@
+<div id="flash">
+  <% flash.each do |type, message| %>
+    <% if type == "notice" %>
+      <p class="mx-4 mt-4 rounded border border-green-800 bg-green-950 px-4 py-2 text-sm text-green-200" role="status"><%= message %></p>
+    <% elsif type == "alert" %>
+      <p class="mx-4 mt-4 rounded border border-red-800 bg-red-950 px-4 py-2 text-sm text-red-200" role="alert"><%= message %></p>
+    <% end %>
+  <% end %>
+</div>
