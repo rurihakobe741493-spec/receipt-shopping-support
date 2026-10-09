@@ -4,7 +4,7 @@ require "google/cloud/vision"
 class ReceiptOcrService
   class Error < StandardError; end
 
-  def self.call(image, feature: :TEXT_DETECTION)
+  def self.call(image, feature: :DOCUMENT_TEXT_DETECTION)
     new(image, feature:).call
   end
 
