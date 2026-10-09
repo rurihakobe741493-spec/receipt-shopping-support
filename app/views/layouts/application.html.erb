@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" class="scheme-dark">
   <head>
-    <title><%= content_for(:title) || "Myapp" %></title>
+    <title><%= content_for(:title) || app_name %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Myapp">
+    <meta name="application-name" content="<%= app_name %>">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,12 +18,19 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# :app だと Tailwind の入力（app/assets/stylesheets/application.tailwind.css）まで読み込み<head>内の<link rel="stylesheet"~>が二重になるため、出力の application.css だけを指定する %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-neutral-950 text-neutral-100">
+    <div class="mx-auto flex min-h-dvh max-w-md flex-col bg-neutral-900">
+      <%= render "shared/header" %>
+      <%= render "shared/flash" %>
+      <main class="grow">
+        <%= yield %>
+      </main>
+      <%= render "shared/footer" %>
+    </div>
   </body>
 </html>
