@@ -3,3 +3,9 @@ ja:
     attributes:
       user:
         email: メールアドレス
+        password_confirmation: パスワード（確認）
+  errors:
+    messages:
+      not_saved:
+        one: 入力内容を確認してください。
+        other: 入力内容を確認してください。
