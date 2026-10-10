@@ -68,6 +68,9 @@ RSpec.configure do |config|
   # FactoryBot.create(:user) を create(:user) と書けるようにする
   config.include FactoryBot::Syntax::Methods
 
+  # travel_to などの時間操作メソッドを使えるようにする
+  config.include ActiveSupport::Testing::TimeHelpers
+
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
