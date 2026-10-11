@@ -1,3 +1,6 @@
-<header class="border-b bg-neutral-950 px-4 py-3">
+<header class="flex items-center justify-between border-b bg-neutral-950 px-4 py-3">
   <%= link_to app_name, root_path, class: "text-lg font-bold" %>
+  <nav class="flex gap-4">
+    <%= link_to "新規登録", new_user_registration_path, class: "text-neutral-300 hover:text-neutral-100" %>
+  </nav>
 </header>

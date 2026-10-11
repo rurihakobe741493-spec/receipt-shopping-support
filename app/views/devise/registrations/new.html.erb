@@ -1,0 +1,29 @@
+<div class="px-4 py-10">
+  <h1 class="mb-8 text-center text-2xl">新規登録</h1>
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <div>
+      <%= f.label :email, class: "mb-2 block text-neutral-300" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "w-full rounded-xl border px-4 py-3" %>
+    </div>
+
+    <div>
+      <div class="mb-2 flex items-baseline">
+        <%= f.label :password, class: "text-neutral-300" %>
+        <% if @minimum_password_length %>
+          <span class="text-sm text-neutral-400"><%= t("devise.shared.minimum_password_length", count: @minimum_password_length) %></span>
+        <% end %>
+      </div>
+      <%= f.password_field :password, autocomplete: "new-password", class: "w-full rounded-xl border px-4 py-3" %>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, class: "mb-2 block text-neutral-300" %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "w-full rounded-xl border px-4 py-3" %>
+    </div>
+
+    <%= f.submit "登録する", class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300" %>
+  <% end %>
+</div>
