@@ -13,9 +13,9 @@
     </div>
 
     <% if devise_mapping.rememberable? %>
-      <div>
-        <%= f.check_box :remember_me %>
-        <%= f.label :remember_me %>
+      <div class="flex items-center gap-2">
+        <%= f.check_box :remember_me, class: "size-4 cursor-pointer" %>
+        <%= f.label :remember_me, class: "cursor-pointer text-neutral-300" %>
       </div>
     <% end %>
 
