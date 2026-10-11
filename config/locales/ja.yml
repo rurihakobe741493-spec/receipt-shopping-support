@@ -4,6 +4,7 @@ ja:
       user:
         email: メールアドレス
         password_confirmation: パスワード（確認）
+        remember_me: ログイン状態を保持する
   errors:
     messages:
       not_saved:
