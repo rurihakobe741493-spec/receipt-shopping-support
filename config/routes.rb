@@ -11,5 +11,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
+  # ログイン後のトップ。ルートは上から順に照合されるので、条件のない root より上に置く
+  authenticated :user do
+    root "items#index", as: :authenticated_root
+  end
   root "static_pages#top"
 end
