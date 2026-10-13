@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :user
+  has_many :purchases, dependent: :destroy
 
   normalizes :name, with: ->(name) { name.squish }
 
