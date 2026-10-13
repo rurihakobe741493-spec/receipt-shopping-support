@@ -1,10 +1,22 @@
 ja:
   activerecord:
+    models:
+      item: ストック
+      purchase: 購入記録
     attributes:
       user:
         email: メールアドレス
         password_confirmation: パスワード（確認）
         remember_me: ログイン状態を保持する
+      item:
+        user: ユーザー
+        name: 品目名
+        cycle_days: 周期
+        cycle_changed_on: 周期の変更日
+      purchase:
+        item: ストック
+        purchased_on: 購入日
+        receipt_name: レシート表記
   errors:
     messages:
       not_saved:
