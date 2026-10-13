@@ -321,3 +321,5 @@ https://www.figma.com/design/OVoMkVo7sP42IGpOz8vkdu/%25E7%2584%25A1%25E9%25A1%25
 
 ### 12. ER図
 https://dbdiagram.io/d/6aba5d105869425612b5ee58
+- この README と画面では、登録して管理する消耗品を「ストック」と呼んでいる。テーブルでは `items`（その購入記録は `purchases`）にあたる
+- インデックス：`items` は `(user_id, name)` のユニークインデックス、`purchases` は `(item_id, purchased_on)` の複合インデックス（同じ日の購入を許すため、ユニークではない）。どちらも先頭の列で探せるので、`user_id`・`item_id` だけのインデックスは作っていない
