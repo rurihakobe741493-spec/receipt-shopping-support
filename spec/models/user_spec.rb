@@ -42,4 +42,36 @@ RSpec.describe User, type: :model do
       expect(user.errors).to be_of_kind(:email, :invalid)
     end
   end
+
+  describe "パスワード" do
+    it "空なら無効" do
+      user = build(:user, password: "")
+      user.valid?
+      expect(user.errors).to be_of_kind(:password, :blank)
+    end
+
+    it "7文字なら無効" do
+      user = build(:user, password: "a" * 7)
+      user.valid?
+      expect(user.errors).to be_of_kind(:password, :too_short)
+    end
+
+    it "8文字なら有効" do
+      expect(build(:user, password: "a" * 8)).to be_valid
+    end
+
+    it "128文字なら有効" do
+      expect(build(:user, password: "a" * 128)).to be_valid
+    end
+
+    it "129文字なら無効" do
+      expect(build(:user, password: "a" * 129)).to be_invalid
+    end
+
+    it "確認用と一致しなければ無効" do
+      user = build(:user, password_confirmation: "different123")
+      user.valid?
+      expect(user.errors).to be_of_kind(:password_confirmation, :confirmation)
+    end
+  end
 end
