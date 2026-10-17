@@ -1,3 +1,11 @@
-<div class="px-4 py-10">
+<div class="flex grow flex-col px-4 pt-10">
   <h1 class="text-xl">ストック一覧</h1>
+
+  <%= form_with url: receipt_scans_path, class: "sticky bottom-0 mt-auto grid gap-3 bg-neutral-900 py-4" do |f| %>
+    <%= f.label :image, "レシートを撮る", class: "text-neutral-300" %>
+    <%= f.file_field :image, accept: "image/jpeg,image/png,image/webp", required: true,
+          class: "w-full text-sm text-neutral-300 file:mr-3 file:rounded-xl file:border-0 file:bg-neutral-100 file:px-4 file:py-3 file:text-neutral-900" %>
+    <p class="text-sm text-neutral-400">撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。</p>
+    <%= f.submit "読み取る", class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300" %>
+  <% end %>
 </div>

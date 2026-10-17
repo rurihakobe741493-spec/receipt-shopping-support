@@ -16,4 +16,6 @@ Rails.application.routes.draw do
     root "items#index", as: :authenticated_root
   end
   root "static_pages#top"
+
+  resources :receipt_scans, only: [ :create ]
 end

@@ -74,4 +74,12 @@ RSpec.describe User, type: :model do
       expect(user.errors).to be_of_kind(:password_confirmation, :confirmation)
     end
   end
+
+  describe "削除" do
+    it "ユーザーを削除すると、品目と購入記録も削除される" do
+      purchase = create(:purchase)
+      user = purchase.item.user
+      expect { user.destroy }.to change(Item, :count).by(-1).and change(Purchase, :count).by(-1)
+    end
+  end
 end

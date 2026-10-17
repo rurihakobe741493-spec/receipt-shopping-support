@@ -1,8 +1,6 @@
 FactoryBot.define do
   factory :item do
-    user { nil }
-    name { "MyString" }
-    cycle_days { 1 }
-    cycle_changed_on { "2026-10-13" }
+    association :user
+    sequence(:name) { |n| "品目#{n}" }
   end
 end
