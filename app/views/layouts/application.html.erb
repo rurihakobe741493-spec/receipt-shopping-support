@@ -27,7 +27,8 @@
     <div class="mx-auto flex min-h-dvh max-w-md flex-col bg-neutral-900">
       <%= render "shared/header" %>
       <%= render "shared/flash" %>
-      <main class="grow">
+      <%# id="main" は、receipt_scans/create.turbo_stream.erb が中身を差し替える目印。flex flex-col は、ページの中身を縦に伸ばし、items/index のフォームを画面の下に寄せるため %>
+      <main id="main" class="flex grow flex-col">
         <%= yield %>
       </main>
       <%= render "shared/footer" %>
