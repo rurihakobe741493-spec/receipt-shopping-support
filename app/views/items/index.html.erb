@@ -2,9 +2,11 @@
   <h1 class="text-xl">ストック一覧</h1>
 
   <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 bg-neutral-900 py-4" do |f| %>
-    <%= f.label :image, "レシートを撮る", class: "text-neutral-300" %>
-    <%= f.file_field :image, accept: "image/jpeg,image/png,image/webp", required: true,
-          class: "w-full text-sm text-neutral-300 file:mr-3 file:rounded-xl file:border-0 file:bg-neutral-100 file:px-4 file:py-3 file:text-neutral-900" %>
+    <div class="grid gap-3 group-aria-busy:hidden">
+      <%= f.label :image, "レシートを撮る", class: "text-neutral-300" %>
+      <%= f.file_field :image, accept: "image/jpeg,image/png,image/webp", required: true,
+            class: "w-full text-sm text-neutral-300 file:mr-3 file:rounded-xl file:border-0 file:bg-neutral-100 file:px-4 file:py-3 file:text-neutral-900" %>
+    </div>
     <div class="hidden group-aria-busy:flex flex-col items-center gap-2 py-1 text-center">
       <span aria-hidden="true" class="size-6 animate-spin rounded-full border-2 border-neutral-600 border-t-neutral-100 motion-reduce:hidden"></span>
       <p>レシートを読み取っています</p>
