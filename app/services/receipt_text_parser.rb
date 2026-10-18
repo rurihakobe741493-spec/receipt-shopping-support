@@ -6,6 +6,30 @@ class ReceiptTextParser
   ].freeze
   MAX_AGE = 1.year
 
+  # 品目行の範囲の終わりの目印（文字の間の空白を許す）
+  SUBTOTAL_PATTERN = /小\s*計/
+  TOTAL_PATTERN = /合\s*計/
+
+  # 金額（¥ を \ や # と読み違えたもの、カンマや空白の入ったものを含む）
+  PRICE_PATTERN = /[¥\\#]\s*\d(?:[\d,\s]*\d)?/
+
+  # 品目ではない行
+  EXCLUDED_LINE_PATTERNS = [
+    TOTAL_PATTERN,                                       # 範囲の中の合計
+    /\A\(?(?:\d+個\s*)?#{PRICE_PATTERN}(?:\s*\d+個)?\z/, # 金額だけ・金額と個数だけ（¥100・¥100 2個・(2個¥200）
+    /\A@\s*\d/,                                          # 単価（@100 1）
+    /\A\d{13}\z/,                                        # JANコード
+    /割引/,                                              # 割引
+    /\A-/,                                               # 値引き（-\10）
+    /まとめ/,                                            # まとめ買い
+    /\A[^\p{L}\p{N}]+\z/                                 # 文字も数字もない行（) など）
+  ].freeze
+
+  # 行の頭の書き方（内・内*・03x・11 ×・A11 × など）
+  LINE_HEAD_PATTERN = /\A(?:内(?:\*|(?!\p{L}))|[A-Z]?\d{2}\s*[x×])/
+  # 行の末尾の金額
+  TRAILING_PRICE_PATTERN = /\s*#{PRICE_PATTERN}\z/
+
   def initialize(text)
     @lines = text.lines(chomp: true)
   end
@@ -19,6 +43,13 @@ class ReceiptTextParser
 
     today = Date.current
     date if date > today - MAX_AGE && date <= today
+  end
+
+  def item_lines
+    range_lines
+      .reject { |line| excluded?(line) }
+      .map { |line| line.sub(LINE_HEAD_PATTERN, "").sub(TRAILING_PRICE_PATTERN, "").squish }
+      .reject(&:empty?)
   end
 
   private
@@ -39,5 +70,24 @@ class ReceiptTextParser
       year, month, day = match.captures.map(&:to_i)
       year += 2000 if year < 100
       Date.new(year, month, day) if Date.valid_date?(year, month, day)
+    end
+
+    # 日付の行の次（なければ先頭）から、範囲の終わりの前までの行を、整えて返す
+    def range_lines
+      index = date_line_index
+      start = index ? index + 1 : 0
+      lines = @lines[start..].map(&:squish)
+      lines.take(range_end(lines))
+    end
+
+    # 最初の小計の行の位置。なければ最初の合計の行の位置。どちらもなければ最後まで
+    def range_end(lines)
+      lines.index { |line| line.match?(SUBTOTAL_PATTERN) } ||
+        lines.index { |line| line.match?(TOTAL_PATTERN) } ||
+        lines.size
+    end
+
+    def excluded?(line)
+      EXCLUDED_LINE_PATTERNS.any? { |pattern| line.match?(pattern) }
     end
 end
