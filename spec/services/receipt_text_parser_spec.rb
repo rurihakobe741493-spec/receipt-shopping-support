@@ -1,11 +1,11 @@
 require "rails_helper"
 
 RSpec.describe ReceiptTextParser do
-  around do |example|
-    travel_to(Date.new(2026, 10, 10)) { example.run }
-  end
-
   describe "#purchased_on" do
+    around do |example|
+      travel_to(Date.new(2026, 10, 10)) { example.run }
+    end
+
     def purchased_on(text)
       described_class.new(text).purchased_on
     end
