@@ -9,24 +9,31 @@ class ReceiptTextParser
   # 品目行の範囲の終わりの目印（文字の間の空白を許す）
   SUBTOTAL_PATTERN = /小\s*計/
   TOTAL_PATTERN = /合\s*計/
+  # 小計も合計も読めなかったときの、範囲の終わりの目印
+  FALLBACK_END_PATTERNS = [
+    /消費税/,            # (内消費税
+    /\d+\s*点(?!\p{L})/  # ( 3点)・1点
+  ].freeze
 
   # 金額（¥ を \ や # と読み違えたもの、カンマや空白の入ったものを含む）
   PRICE_PATTERN = /[¥\\#]\s*\d(?:[\d,\s]*\d)?/
 
   # 品目ではない行
   EXCLUDED_LINE_PATTERNS = [
-    TOTAL_PATTERN,                                       # 範囲の中の合計
-    /\A\(?(?:\d+個\s*)?#{PRICE_PATTERN}(?:\s*\d+個)?\z/, # 金額だけ・金額と個数だけ（¥100・¥100 2個・(2個¥200）
-    /\A@\s*\d/,                                          # 単価（@100 1）
-    /\A\d{13}\z/,                                        # JANコード
-    /割引/,                                              # 割引
-    /\A-/,                                               # 値引き（-\10）
-    /まとめ/,                                            # まとめ買い
-    /\A[^\p{L}\p{N}]+\z/                                 # 文字も数字もない行（) など）
+    TOTAL_PATTERN,                                          # 範囲の中の合計
+    /\A\(?(?:\d+個\s*)?#{PRICE_PATTERN}(?:\s*\d+個)?\)?\z/, # 金額だけ・金額と個数だけ（¥100・¥100 2個・(2個¥200・¥10)）
+    /\A\d(?:[\d,\s]*\d)?\z/,                                # 数字だけ（金額・個数・JANコード）
+    /\A\d+\s*[個コ]\s*[x×]/,                                # 数量（2コ x 単100）
+    /\A#{PRICE_PATTERN}\s*[x×]\s*\d/,                       # 数量（¥100×2(外10)）
+    /\A@\s*\d/,                                             # 単価（@100 1）
+    /割引/,                                                 # 割引
+    /\A-/,                                                  # 値引き（-\10）
+    /まとめ/,                                               # まとめ買い
+    /\A[^\p{L}\p{N}]+\z/                                    # 文字も数字もない行（) など）
   ].freeze
 
-  # 行の頭の書き方（内・内*・03x・11 ×・A11 × など）
-  LINE_HEAD_PATTERN = /\A(?:内(?:\*|(?!\p{L}))|[A-Z]?\d{2}\s*[x×])/
+  # 行の頭の書き方（内・内*・03x・11 ×・A11 ×・01* など）
+  LINE_HEAD_PATTERN = /\A(?:内(?:\*|(?!\p{L}))|[A-Z]?\d{2}\s*[x×*])/
   # 行の末尾の金額
   TRAILING_PRICE_PATTERN = /\s*#{PRICE_PATTERN}\z/
 
@@ -84,6 +91,7 @@ class ReceiptTextParser
     def range_end(lines)
       lines.index { |line| line.match?(SUBTOTAL_PATTERN) } ||
         lines.index { |line| line.match?(TOTAL_PATTERN) } ||
+        lines.index { |line| FALLBACK_END_PATTERNS.any? { |pattern| line.match?(pattern) } } ||
         lines.size
     end
 
