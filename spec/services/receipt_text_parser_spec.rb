@@ -26,6 +26,18 @@ RSpec.describe ReceiptTextParser do
       it "年・月・日の文字の前後に空白があるとき、その日付を返す" do
         expect(purchased_on("2026 年 9 月 1 日")).to eq(Date.new(2026, 9, 1))
       end
+
+      it "スラッシュで年が4桁のとき、その日付を返す" do
+        expect(purchased_on("2026/09/01")).to eq(Date.new(2026, 9, 1))
+      end
+
+      it "スラッシュで年が2桁のとき、2000年代の日付を返す" do
+        expect(purchased_on("26/09/01")).to eq(Date.new(2026, 9, 1))
+      end
+
+      it "スラッシュで月日が0埋めでないとき、その日付を返す" do
+        expect(purchased_on("26/9/1")).to eq(Date.new(2026, 9, 1))
+      end
     end
 
     context "範囲" do
@@ -54,6 +66,10 @@ RSpec.describe ReceiptTextParser do
       it "13月は nil を返す" do
         expect(purchased_on("2026年13月01日")).to be_nil
       end
+
+      it "スラッシュの13月は nil を返す" do
+        expect(purchased_on("26/13/01")).to be_nil
+      end
     end
 
     context "日付の行の選び方" do
@@ -72,6 +88,10 @@ RSpec.describe ReceiptTextParser do
         TEXT
 
         expect(purchased_on(text)).to eq(Date.new(2026, 10, 3))
+      end
+
+      it "スラッシュの日付の行が先にあれば、その行から購入日を返す" do
+        expect(purchased_on("2026/09/01\n2026年09月02日")).to eq(Date.new(2026, 9, 1))
       end
     end
 
