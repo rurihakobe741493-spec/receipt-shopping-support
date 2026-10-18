@@ -209,6 +209,10 @@ RSpec.describe ReceiptTextParser do
         expect(item_lines("サンプル牛乳\n2個まとめ ¥180")).to eq([ "サンプル牛乳" ])
       end
 
+      it "税の行は除く" do
+           expect(item_lines("サンプル牛乳\n※印は軽減税率対象")).to eq([ "サンプル牛乳" ])
+         end
+
       it "文字も数字もない行は除く" do
         expect(item_lines("サンプル牛乳\n)\n***")).to eq([ "サンプル牛乳" ])
       end
