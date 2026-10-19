@@ -21,8 +21,8 @@ class ReceiptScansController < ApplicationController
     end
 
     def image_error_message(image)
-      return "画像を選んでください。" unless image.is_a?(ActionDispatch::Http::UploadedFile)
-      return "JPEG・PNG・WEBP の画像を選んでください。" unless ALLOWED_CONTENT_TYPES.include?(image.content_type)
-      "画像が大きすぎます（#{MAX_IMAGE_SIZE / 1.megabyte}MBまで）。" if image.size > MAX_IMAGE_SIZE
+      return t(".no_image") unless image.is_a?(ActionDispatch::Http::UploadedFile)
+      return t(".invalid_type") unless ALLOWED_CONTENT_TYPES.include?(image.content_type)
+      t(".too_large", size: MAX_IMAGE_SIZE / 1.megabyte) if image.size > MAX_IMAGE_SIZE
     end
 end
