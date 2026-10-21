@@ -6,11 +6,15 @@ class ReceiptScansController < ApplicationController
   before_action :check_image
 
   def create
-    @text = ReceiptOcrService.call(params[:image])
-    return redirect_to(root_path, alert: t(".no_text"), status: :see_other) if @text.blank?
+    text = ReceiptOcrService.call(params[:image])
+    return redirect_to(root_path, alert: t(".no_text"), status: :see_other) if text.blank?
 
-    @item_lines = ReceiptTextParser.new(@text).item_lines
-    redirect_to root_path, alert: t(".no_item_lines"), status: :see_other if @item_lines.empty?
+    parser = ReceiptTextParser.new(text)
+    @item_lines = parser.item_lines
+    return redirect_to(root_path, alert: t(".no_item_lines"), status: :see_other) if @item_lines.empty?
+
+    @purchased_on = parser.purchased_on
+    @items = current_user.items.order(:name)
   rescue ReceiptOcrService::Error => e
     Rails.logger.warn("ReceiptOcrService::Error: #{e.message}")
     redirect_to root_path, alert: t(".ocr_error"), status: :see_other

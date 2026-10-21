@@ -1,4 +1,16 @@
+<% today = Date.current %>
 <div class="px-4 py-10">
-  <h1 class="text-xl">読み取った全文（仮）</h1>
-  <pre class="mt-4 whitespace-pre-wrap break-words text-sm"><%= text %></pre>
+  <h1 class="text-xl"><%= t(".title") %></h1>
+
+  <div class="mt-6 space-y-6">
+    <div class="flex items-center gap-3">
+      <%= label_tag "purchased_on", Purchase.human_attribute_name(:purchased_on), class: "shrink-0 text-neutral-300" %>
+      <%= date_field_tag "purchased_on", purchased_on,
+            min: today - ReceiptTextParser::MAX_AGE + 1, max: today, required: true,
+            class: "min-w-0 grow rounded-xl border px-4 py-3" %>
+    </div>
+
+    <%= link_to t(".cancel"), root_path,
+          class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
+  </div>
 </div>
