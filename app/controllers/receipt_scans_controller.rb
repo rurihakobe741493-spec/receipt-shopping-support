@@ -7,7 +7,10 @@ class ReceiptScansController < ApplicationController
 
   def create
     @text = ReceiptOcrService.call(params[:image])
-    redirect_to root_path, alert: t(".no_text"), status: :see_other if @text.blank?
+    return redirect_to(root_path, alert: t(".no_text"), status: :see_other) if @text.blank?
+
+    @item_lines = ReceiptTextParser.new(@text).item_lines
+    redirect_to root_path, alert: t(".no_item_lines"), status: :see_other if @item_lines.empty?
   rescue ReceiptOcrService::Error => e
     Rails.logger.warn("ReceiptOcrService::Error: #{e.message}")
     redirect_to root_path, alert: t(".ocr_error"), status: :see_other
