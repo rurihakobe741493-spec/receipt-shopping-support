@@ -10,6 +10,28 @@
             class: "min-w-0 grow rounded-xl border px-4 py-3" %>
     </div>
 
+    <p class="text-neutral-300"><%= t(".instruction") %></p>
+
+    <ul class="space-y-3">
+      <% item_lines.each_with_index do |item_line, i| %>
+        <li class="space-y-3 rounded-xl border border-neutral-700 p-4">
+          <div class="flex items-center gap-3">
+            <%= check_box_tag "rows[#{i}][selected]", "1", true,
+                  class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
+            <%= text_field_tag "rows[#{i}][receipt_name]", item_line,
+                  class: "min-w-0 grow rounded-xl border px-4 py-3",
+                  aria: { label: Purchase.human_attribute_name(:receipt_name) } %>
+          </div>
+          <div class="flex items-center gap-3 pl-8">
+            <%= label_tag "rows[#{i}][item_id]", Purchase.human_attribute_name(:item), class: "shrink-0 text-neutral-300" %>
+            <%= select_tag "rows[#{i}][item_id]",
+                  options_for_select([ [ t(".new_item"), "new" ] ]) + options_from_collection_for_select(items, :id, :name),
+                  prompt: t(".select_prompt"), class: "min-w-0 grow rounded-xl border px-4 py-3" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
     <%= link_to t(".cancel"), root_path,
           class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
   </div>

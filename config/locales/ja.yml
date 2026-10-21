@@ -32,4 +32,8 @@ ja:
       ocr_error: "読み取りの途中で問題が起きました。少し時間をおいて、もう一度お試しください。続くときは、レシートを撮り直してください。"
     result:
       title: "読み取り結果の確認"
+      instruction: "管理しないものは、チェックを外してください"
+      row_checkbox_label: "この行を登録する"
+      select_prompt: "選んでください"
+      new_item: "新規として登録"
       cancel: "キャンセル"
