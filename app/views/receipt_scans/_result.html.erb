@@ -2,12 +2,19 @@
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
-  <div class="mt-6 space-y-6">
+    <div class="mt-6 space-y-6">
+    <% if purchased_on.nil? %>
+      <p id="purchased_on_missing" class="rounded-xl border border-amber-700 bg-amber-950 px-4 py-3 text-amber-300">
+        <%= t(".purchased_on_missing") %>
+      </p>
+    <% end %>
+
     <div class="flex items-center gap-3">
       <%= label_tag "purchased_on", Purchase.human_attribute_name(:purchased_on), class: "shrink-0 text-neutral-300" %>
       <%= date_field_tag "purchased_on", purchased_on,
             min: today - ReceiptTextParser::MAX_AGE + 1, max: today, required: true,
-            class: "min-w-0 grow rounded-xl border px-4 py-3" %>
+            class: "min-w-0 grow rounded-xl border px-4 py-3",
+            aria: { describedby: ("purchased_on_missing" if purchased_on.nil?) } %>
     </div>
 
     <p class="text-neutral-300"><%= t(".instruction") %></p>
