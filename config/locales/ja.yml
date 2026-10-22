@@ -37,4 +37,5 @@ ja:
       row_checkbox_label: "この行を登録する"
       select_prompt: "選んでください"
       new_item: "新規として登録"
+      unchecked_note: "チェックを外すと登録されません"
       cancel: "キャンセル"
