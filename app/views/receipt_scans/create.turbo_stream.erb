@@ -1,1 +1,1 @@
-<%= turbo_stream.update "main", partial: "receipt_scans/result", locals: { text: @text } %>
+<%= turbo_stream.update "main", partial: "receipt_scans/result", locals: { purchased_on: @purchased_on, item_lines: @item_lines, items: @items } %>
