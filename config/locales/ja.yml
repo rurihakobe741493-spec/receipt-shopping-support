@@ -22,3 +22,20 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  receipt_scans:
+    create:
+      no_image: "画像を選んでください。"
+      invalid_type: "JPEG・PNG・WEBP の画像を選んでください。"
+      too_large: "画像が大きすぎます（%{size}MBまで）。"
+      no_text: "レシートの文字を読み取れませんでした。明るい場所で、レシート全体を画面いっぱいに写して撮り直してください。"
+      no_item_lines: "レシートから品目を見つけられませんでした。レシート全体を画面いっぱいに写して撮り直してください。"
+      ocr_error: "読み取りの途中で問題が起きました。少し時間をおいて、もう一度お試しください。続くときは、レシートを撮り直してください。"
+    result:
+      title: "読み取り結果の確認"
+      purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。"
+      instruction: "管理しないものは、チェックを外してください"
+      row_checkbox_label: "この行を登録する"
+      select_prompt: "選んでください"
+      new_item: "新規として登録"
+      unchecked_note: "チェックを外すと登録されません"
+      cancel: "キャンセル"
