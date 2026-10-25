@@ -17,6 +17,14 @@ ja:
         item: ストック
         purchased_on: 購入日
         receipt_name: レシート表記
+    errors:
+      models:
+        purchase:
+          attributes:
+            item:
+              required: を選んでください
+            purchased_on:
+              out_of_range: は1年以内の、今日までの日付を入力してください
   errors:
     messages:
       not_saved:
