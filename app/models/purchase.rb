@@ -10,6 +10,7 @@ class Purchase < ApplicationRecord
   validate :purchased_on_must_be_within_range
 
   # 購入日として受け付ける範囲（1年前の同じ日の翌日〜今日）
+  # パーサーの購入日の候補と、確認画面の購入日の欄の min・max も、この範囲を使う
   def self.purchased_on_range
     today = Date.current
     (today - MAX_AGE + 1)..today

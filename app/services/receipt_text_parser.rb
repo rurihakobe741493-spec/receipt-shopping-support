@@ -4,7 +4,6 @@ class ReceiptTextParser
     /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/, # 2026年1月2日
     %r{(\d{4}|\d{2})/(\d{1,2})/(\d{1,2})}           # 2026/01/02・26/01/02
   ].freeze
-  MAX_AGE = 1.year
 
   # 品目行の範囲の終わりの目印（文字の間の空白を許す）
   SUBTOTAL_PATTERN = /小\s*計/
@@ -49,8 +48,7 @@ class ReceiptTextParser
     date = build_date(date_match(@lines[index]))
     return if date.nil?
 
-    today = Date.current
-    date if date > today - MAX_AGE && date <= today
+    date if Purchase.purchased_on_range.cover?(date)
   end
 
   def item_lines

@@ -1,4 +1,4 @@
-<% today = Date.current %>
+<% purchased_on_range = Purchase.purchased_on_range %>
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
@@ -12,7 +12,7 @@
     <div class="flex items-center gap-3">
       <%= label_tag "purchased_on", Purchase.human_attribute_name(:purchased_on), class: "shrink-0 text-neutral-300" %>
       <%= date_field_tag "purchased_on", purchased_on,
-            min: today - ReceiptTextParser::MAX_AGE + 1, max: today, required: true,
+            min: purchased_on_range.begin, max: purchased_on_range.end, required: true,
             class: "min-w-0 grow rounded-xl border px-4 py-3",
             aria: { describedby: ("purchased_on_missing" if purchased_on.nil?) } %>
     </div>
