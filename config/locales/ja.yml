@@ -25,6 +25,14 @@ ja:
               required: を選んでください
             purchased_on:
               out_of_range: は1年以内の、今日までの日付を入力してください
+  activemodel:
+    errors:
+      models:
+        receipt_registration_form:
+          attributes:
+            base:
+              no_selected_rows: 登録する行にチェックを入れてください
+              save_failed: 登録の途中で問題が起きました。もう一度お試しください
   errors:
     messages:
       not_saved:
