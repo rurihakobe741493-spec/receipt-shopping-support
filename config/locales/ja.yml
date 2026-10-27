@@ -55,6 +55,9 @@ ja:
       new_item: "新規として登録"
       unchecked_note: "チェックを外すと登録されません"
       cancel: "キャンセル"
+      submit: "この内容で登録する"
+      submitting: "登録中…"
+      error_notice: "登録できませんでした。下の内容を確かめて、直してください。"
   receipt_registrations:
     create:
       success: "%{count}件の購入記録を登録しました。"
