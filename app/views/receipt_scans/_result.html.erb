@@ -6,7 +6,7 @@
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
-  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6" do |f| %>
+  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6", data: { controller: "prevent-enter-submit" } do |f| %>
     <% if form.errors.any? %>
       <div id="registration_errors" data-turbo-temporary role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
         <p class="font-medium"><%= t(".error_notice") %></p>
@@ -54,7 +54,8 @@
                   class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
             <%= row_form.text_field :receipt_name,
                   class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:receipt_name)),
-                  aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) } %>
+                  aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
+                  data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
           </div>
           <div class="hidden items-center gap-3 pl-8 group-has-[input:checked]:flex">
             <%= row_form.label :item_id, class: "shrink-0 text-neutral-300" %>
