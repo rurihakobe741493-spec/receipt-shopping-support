@@ -6,7 +6,8 @@
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
-  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6", data: { controller: "prevent-enter-submit" } do |f| %>
+  <%# novalidate：iPhone の Safari は、送る前に止めても理由を出さないので、ブラウザでは止めず、サーバーの検証の文で知らせる %>
+  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6", data: { controller: "prevent-enter-submit" }, html: { novalidate: true } do |f| %>
     <% if form.errors.any? %>
       <div id="registration_errors" data-turbo-temporary role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
         <p class="font-medium"><%= t(".error_notice") %></p>
