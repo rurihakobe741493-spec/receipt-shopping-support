@@ -17,6 +17,22 @@ ja:
         item: ストック
         purchased_on: 購入日
         receipt_name: レシート表記
+    errors:
+      models:
+        purchase:
+          attributes:
+            item:
+              required: を選んでください
+            purchased_on:
+              out_of_range: は1年以内の、今日までの日付を入力してください
+  activemodel:
+    errors:
+      models:
+        receipt_registration_form:
+          attributes:
+            base:
+              no_selected_rows: 登録する行にチェックを入れてください
+              save_failed: 登録の途中で問題が起きました。もう一度お試しください
   errors:
     messages:
       not_saved:
@@ -32,10 +48,16 @@ ja:
       ocr_error: "読み取りの途中で問題が起きました。少し時間をおいて、もう一度お試しください。続くときは、レシートを撮り直してください。"
     result:
       title: "読み取り結果の確認"
-      purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。"
+      purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。今日の日付が入っていたら、レシートの日付と同じか確かめてください。"
       instruction: "管理しないものは、チェックを外してください"
       row_checkbox_label: "この行を登録する"
       select_prompt: "選んでください"
       new_item: "新規として登録"
       unchecked_note: "チェックを外すと登録されません"
       cancel: "キャンセル"
+      submit: "この内容で登録する"
+      submitting: "登録中…"
+      error_notice: "登録できませんでした。下の内容を確かめて、直してください。"
+  receipt_registrations:
+    create:
+      success: "%{count}件の購入記録を登録しました。"

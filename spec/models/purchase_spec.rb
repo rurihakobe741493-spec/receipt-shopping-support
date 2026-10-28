@@ -25,6 +25,38 @@ RSpec.describe Purchase, type: :model do
       same_day_purchase = create(:purchase, item: purchase.item, purchased_on: purchase.purchased_on)
       expect(same_day_purchase).to be_persisted
     end
+
+    describe "範囲（1年前の同じ日の翌日〜今日）" do
+      around do |example|
+        travel_to(Date.new(2026, 3, 15)) { example.run }
+      end
+
+      it "今日なら有効" do
+        expect(build(:purchase, purchased_on: Date.new(2026, 3, 15))).to be_valid
+      end
+
+      it "明日なら無効" do
+        purchase = build(:purchase, purchased_on: Date.new(2026, 3, 16))
+        purchase.valid?
+        expect(purchase.errors).to be_of_kind(:purchased_on, :out_of_range)
+      end
+
+      it "1年前の同じ日の翌日なら有効" do
+        expect(build(:purchase, purchased_on: Date.new(2025, 3, 16))).to be_valid
+      end
+
+      it "1年前の同じ日なら無効" do
+        purchase = build(:purchase, purchased_on: Date.new(2025, 3, 15))
+        purchase.valid?
+        expect(purchase.errors).to be_of_kind(:purchased_on, :out_of_range)
+      end
+
+      it "空なら、範囲のエラーは出ない" do
+        purchase = build(:purchase, purchased_on: "")
+        purchase.valid?
+        expect(purchase.errors).not_to be_of_kind(:purchased_on, :out_of_range)
+      end
+    end
   end
 
   describe "レシート表記" do

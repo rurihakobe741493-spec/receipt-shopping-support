@@ -36,5 +36,8 @@ module Myapp
     config.time_zone = "Tokyo"
     config.i18n.default_locale = :ja
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # エラーのある欄を div.field_with_errors で囲まない（囲むと flex の並びが崩れるため。赤い枠はビューで付ける）
+    config.action_view.field_error_proc = proc { |html_tag, _instance| html_tag }
   end
 end
