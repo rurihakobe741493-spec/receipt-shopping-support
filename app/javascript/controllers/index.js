@@ -9,3 +9,6 @@ application.register("hello", HelloController)
 
 import PreventEnterSubmitController from "./prevent_enter_submit_controller"
 application.register("prevent-enter-submit", PreventEnterSubmitController)
+
+import ScrollIntoViewController from "./scroll_into_view_controller"
+application.register("scroll-into-view", ScrollIntoViewController)
