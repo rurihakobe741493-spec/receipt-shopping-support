@@ -3,7 +3,7 @@ class ReceiptRegistrationsController < ApplicationController
     @form = ReceiptRegistrationForm.new(receipt_registration_form_params.merge(user: current_user))
 
     if @form.save
-      redirect_to root_path, notice: t(".success", count: @form.purchases_count), status: :see_other
+      redirect_to root_path, notice: success_message, status: :see_other
     else
       render :create, status: :unprocessable_content
     end
