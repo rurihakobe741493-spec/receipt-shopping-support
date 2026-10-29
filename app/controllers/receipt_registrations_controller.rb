@@ -12,7 +12,7 @@ class ReceiptRegistrationsController < ApplicationController
   private
 
     def receipt_registration_form_params
-      params.expect(receipt_registration_form: [ :purchased_on, rows_attributes: [ [ :selected, :receipt_name, :item_id ] ] ])
+      params.expect(receipt_registration_form: [ :purchased_on, rows_attributes: [ [ :selected, :receipt_name, :item_id, :name, :cycle_days ] ] ])
     end
 
     # 新しく作った品目があるときだけ、その数も伝える
