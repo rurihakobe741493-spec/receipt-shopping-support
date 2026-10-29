@@ -70,3 +70,4 @@ ja:
   receipt_registrations:
     create:
       success: "%{count}件の購入記録を登録しました。"
+      success_with_new_items: "新しいストックを%{new_items_count}件作り、%{count}件の購入記録を登録しました。"
