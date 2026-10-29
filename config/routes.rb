@@ -18,4 +18,5 @@ Rails.application.routes.draw do
   root "static_pages#top"
 
   resources :receipt_scans, only: [ :create ]
+  resources :receipt_registrations, only: [ :create ]
 end

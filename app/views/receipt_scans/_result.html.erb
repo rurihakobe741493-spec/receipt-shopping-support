@@ -1,46 +1,131 @@
-<% today = Date.current %>
+<% purchased_on_range = Purchase.purchased_on_range %>
+<% purchased_on_missing = form.purchased_on.nil? && form.errors.empty? %>
+<% purchased_on_error = form.errors.include?(:purchased_on) %>
+<% purchased_on_describedby = ("purchased_on_missing" if purchased_on_missing) || ("purchased_on_error" if purchased_on_error) %>
+<% item_choices = [ [ t(".new_item"), ReceiptRegistrationForm::Row::NEW_ITEM_ID ] ] + form.items.map { |item| [ item.name, item.id ] } %>
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
-    <div class="mt-6 space-y-6">
-    <% if purchased_on.nil? %>
+  <%# novalidate：iPhone の Safari は、送る前に止めても理由を出さないので、ブラウザでは止めず、サーバーの検証の文で知らせる %>
+  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6", data: { controller: "prevent-enter-submit" }, html: { novalidate: true } do |f| %>
+    <% if form.errors.any? %>
+      <div id="registration_errors" data-turbo-temporary data-controller="scroll-into-view" role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
+        <p class="font-medium"><%= t(".error_notice") %></p>
+        <% if form.errors.include?(:base) %>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
+            <% form.errors.full_messages_for(:base).each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if purchased_on_missing %>
       <p id="purchased_on_missing" class="rounded-xl border border-amber-700 bg-amber-950 px-4 py-3 text-amber-300">
         <%= t(".purchased_on_missing") %>
       </p>
     <% end %>
 
-    <div class="flex items-center gap-3">
-      <%= label_tag "purchased_on", Purchase.human_attribute_name(:purchased_on), class: "shrink-0 text-neutral-300" %>
-      <%= date_field_tag "purchased_on", purchased_on,
-            min: today - ReceiptTextParser::MAX_AGE + 1, max: today, required: true,
-            class: "min-w-0 grow rounded-xl border px-4 py-3",
-            aria: { describedby: ("purchased_on_missing" if purchased_on.nil?) } %>
+    <div class="grid gap-2">
+      <div class="flex items-center gap-3">
+        <%= f.label :purchased_on, class: "shrink-0 text-neutral-300" %>
+        <%= f.date_field :purchased_on,
+              min: purchased_on_range.begin, max: purchased_on_range.end, required: true,
+              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": purchased_on_error),
+              aria: { describedby: purchased_on_describedby, invalid: (true if purchased_on_error) } %>
+      </div>
+      <% if purchased_on_error %>
+        <div id="purchased_on_error" class="text-sm text-red-300">
+          <% form.errors.full_messages_for(:purchased_on).each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <p class="text-neutral-300"><%= t(".instruction") %></p>
 
     <ul class="space-y-3">
-      <% item_lines.each_with_index do |item_line, i| %>
-        <li class="group grid gap-3 rounded-xl border p-4">
+      <%= f.fields_for :rows do |row_form| %>
+        <% row = row_form.object %>
+        <% name_messages = row.errors.full_messages_for(:name) %>
+        <% cycle_days_messages = row.errors.full_messages_for(:cycle_days) %>
+        <%# 品目名・周期のエラーは欄の下に出すので、行の下にはそれ以外のエラーを出す %>
+        <% row_messages = row.errors.reject { |error| error.attribute.in?([ :name, :cycle_days ]) }.map(&:full_message) %>
+        <li class="group grid grid-cols-1 gap-3 rounded-xl border p-4">
           <div class="flex items-center gap-3">
-            <%= check_box_tag "rows[#{i}][selected]", "1", true,
+            <%= row_form.check_box :selected,
                   class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
-            <%= text_field_tag "rows[#{i}][receipt_name]", item_line,
-                  class: "min-w-0 grow rounded-xl border px-4 py-3",
-                  aria: { label: Purchase.human_attribute_name(:receipt_name) } %>
+            <%= row_form.text_field :receipt_name,
+                  class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:receipt_name)),
+                  aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
+                  data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
           </div>
           <div class="hidden items-center gap-3 pl-8 group-has-[input:checked]:flex">
-            <%= label_tag "rows[#{i}][item_id]", Purchase.human_attribute_name(:item), class: "shrink-0 text-neutral-300" %>
-            <%= select_tag "rows[#{i}][item_id]",
-                  options_for_select([ [ t(".new_item"), "new" ] ]) + options_from_collection_for_select(items, :id, :name),
-                  prompt: t(".select_prompt"), class: "min-w-0 grow rounded-xl border px-4 py-3" %>
+            <%= row_form.label :item_id, class: "w-16 shrink-0 text-neutral-300" %>
+            <%= row_form.select :item_id, item_choices, { prompt: t(".select_prompt") },
+                  class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:item_id)),
+                  aria: { invalid: (true if row.errors.include?(:item_id)) } %>
+          </div>
+          <%# 品目名と周期は、チェックを入れ、「新規として登録」を選んだ行でだけ出す（CSS だけで出し分ける。value=new は Row::NEW_ITEM_ID と同じ値） %>
+          <%# grid-cols-1：列の最小の幅を0にして、狭い画面で中身が枠の右へはみ出さないようにする %>
+          <div class="hidden grid-cols-1 gap-3 pl-8 group-has-[input:checked]:group-has-[option[value=new]:checked]:grid">
+            <div class="grid grid-cols-1 gap-1">
+              <div class="flex items-center gap-3">
+                <%= row_form.label :name, class: "w-16 shrink-0 text-neutral-300" %>
+                <%= row_form.text_field :name,
+                      class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": name_messages.any?),
+                      aria: { describedby: (row_form.field_id(:name, :error) if name_messages.any?), invalid: (true if name_messages.any?) },
+                      data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
+              </div>
+              <% if name_messages.any? %>
+                <div id="<%= row_form.field_id(:name, :error) %>" class="pl-19 text-sm text-red-300">
+                  <% name_messages.each do |message| %>
+                    <p><%= message %></p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 gap-1">
+              <div class="flex items-center gap-3">
+                <%= row_form.label :cycle_days, class: "w-16 shrink-0 text-neutral-300" %>
+                <%= row_form.number_field :cycle_days,
+                      min: 1, max: Item::MAX_CYCLE_DAYS, step: 1, required: true, inputmode: "numeric",
+                      class: class_names("w-24 rounded-xl border px-4 py-3", "border-red-400": cycle_days_messages.any?),
+                      aria: { describedby: (row_form.field_id(:cycle_days, :error) if cycle_days_messages.any?), invalid: (true if cycle_days_messages.any?) },
+                      data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
+                <span><%= t(".cycle_days_unit") %></span>
+              </div>
+              <%# 欄の下には、エラーがあればその文を、なければ一言を出す（同じ位置。一言とエラーの文が食い違って見えないように） %>
+              <% if cycle_days_messages.any? %>
+                <div id="<%= row_form.field_id(:cycle_days, :error) %>" class="pl-19 text-sm text-red-300">
+                  <% cycle_days_messages.each do |message| %>
+                    <p><%= message %></p>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="pl-19 text-sm text-neutral-400"><%= t(".cycle_days_note") %></p>
+              <% end %>
+            </div>
           </div>
           <p class="pl-8 text-sm text-neutral-400 group-has-[input:checked]:hidden"><%= t(".unchecked_note") %></p>
+          <% if row_messages.any? %>
+            <div class="hidden pl-8 text-sm text-red-300 group-has-[input:checked]:block">
+              <% row_messages.each do |message| %>
+                <p><%= message %></p>
+              <% end %>
+            </div>
+          <% end %>
         </li>
       <% end %>
     </ul>
 
-    <%= link_to t(".cancel"), root_path,
-          class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
-  </div>
+    <div class="grid gap-3">
+      <%= f.submit t(".submit"), data: { turbo_submits_with: t(".submitting") },
+            class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300 disabled:cursor-wait disabled:opacity-50" %>
+      <%= link_to t(".cancel"), root_path,
+            class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
+    </div>
+  <% end %>
 </div>
