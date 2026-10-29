@@ -2,7 +2,7 @@
 <% purchased_on_missing = form.purchased_on.nil? && form.errors.empty? %>
 <% purchased_on_error = form.errors.include?(:purchased_on) %>
 <% purchased_on_describedby = ("purchased_on_missing" if purchased_on_missing) || ("purchased_on_error" if purchased_on_error) %>
-<% item_choices = [ [ t(".new_item"), "new" ] ] + form.items.map { |item| [ item.name, item.id ] } %>
+<% item_choices = [ [ t(".new_item"), ReceiptRegistrationForm::Row::NEW_ITEM_ID ] ] + form.items.map { |item| [ item.name, item.id ] } %>
 <div class="px-4 py-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
@@ -49,7 +49,11 @@
     <ul class="space-y-3">
       <%= f.fields_for :rows do |row_form| %>
         <% row = row_form.object %>
-        <li class="group grid gap-3 rounded-xl border p-4">
+        <% name_messages = row.errors.full_messages_for(:name) %>
+        <% cycle_days_messages = row.errors.full_messages_for(:cycle_days) %>
+        <%# 品目名・周期のエラーは欄の下に出すので、行の下にはそれ以外のエラーを出す %>
+        <% row_messages = row.errors.reject { |error| error.attribute.in?([ :name, :cycle_days ]) }.map(&:full_message) %>
+        <li class="group grid grid-cols-1 gap-3 rounded-xl border p-4">
           <div class="flex items-center gap-3">
             <%= row_form.check_box :selected,
                   class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
@@ -59,15 +63,56 @@
                   data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
           </div>
           <div class="hidden items-center gap-3 pl-8 group-has-[input:checked]:flex">
-            <%= row_form.label :item_id, class: "shrink-0 text-neutral-300" %>
+            <%= row_form.label :item_id, class: "w-16 shrink-0 text-neutral-300" %>
             <%= row_form.select :item_id, item_choices, { prompt: t(".select_prompt") },
                   class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:item_id)),
                   aria: { invalid: (true if row.errors.include?(:item_id)) } %>
           </div>
+          <%# 品目名と周期は、チェックを入れ、「新規として登録」を選んだ行でだけ出す（CSS だけで出し分ける。value=new は Row::NEW_ITEM_ID と同じ値） %>
+          <%# grid-cols-1：列の最小の幅を0にして、狭い画面で中身が枠の右へはみ出さないようにする %>
+          <div class="hidden grid-cols-1 gap-3 pl-8 group-has-[input:checked]:group-has-[option[value=new]:checked]:grid">
+            <div class="grid grid-cols-1 gap-1">
+              <div class="flex items-center gap-3">
+                <%= row_form.label :name, class: "w-16 shrink-0 text-neutral-300" %>
+                <%= row_form.text_field :name,
+                      class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": name_messages.any?),
+                      aria: { describedby: (row_form.field_id(:name, :error) if name_messages.any?), invalid: (true if name_messages.any?) },
+                      data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
+              </div>
+              <% if name_messages.any? %>
+                <div id="<%= row_form.field_id(:name, :error) %>" class="pl-19 text-sm text-red-300">
+                  <% name_messages.each do |message| %>
+                    <p><%= message %></p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 gap-1">
+              <div class="flex items-center gap-3">
+                <%= row_form.label :cycle_days, class: "w-16 shrink-0 text-neutral-300" %>
+                <%= row_form.number_field :cycle_days,
+                      min: 1, max: Item::MAX_CYCLE_DAYS, step: 1, required: true, inputmode: "numeric",
+                      class: class_names("w-24 rounded-xl border px-4 py-3", "border-red-400": cycle_days_messages.any?),
+                      aria: { describedby: (row_form.field_id(:cycle_days, :error) if cycle_days_messages.any?), invalid: (true if cycle_days_messages.any?) },
+                      data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
+                <span><%= t(".cycle_days_unit") %></span>
+              </div>
+              <%# 欄の下には、エラーがあればその文を、なければ一言を出す（同じ位置。一言とエラーの文が食い違って見えないように） %>
+              <% if cycle_days_messages.any? %>
+                <div id="<%= row_form.field_id(:cycle_days, :error) %>" class="pl-19 text-sm text-red-300">
+                  <% cycle_days_messages.each do |message| %>
+                    <p><%= message %></p>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="pl-19 text-sm text-neutral-400"><%= t(".cycle_days_note") %></p>
+              <% end %>
+            </div>
+          </div>
           <p class="pl-8 text-sm text-neutral-400 group-has-[input:checked]:hidden"><%= t(".unchecked_note") %></p>
-          <% if row.errors.any? %>
+          <% if row_messages.any? %>
             <div class="hidden pl-8 text-sm text-red-300 group-has-[input:checked]:block">
-              <% row.errors.full_messages.each do |message| %>
+              <% row_messages.each do |message| %>
                 <p><%= message %></p>
               <% end %>
             </div>

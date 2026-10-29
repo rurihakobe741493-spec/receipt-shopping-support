@@ -19,6 +19,10 @@ ja:
         receipt_name: レシート表記
     errors:
       models:
+        item:
+          attributes:
+            cycle_days:
+              out_of_range: "は1〜365の整数で入力してください"
         purchase:
           attributes:
             item:
@@ -31,8 +35,13 @@ ja:
         receipt_registration_form:
           attributes:
             base:
-              no_selected_rows: 登録する行にチェックを入れてください
-              save_failed: 登録の途中で問題が起きました。もう一度お試しください
+              no_selected_rows: "登録する行にチェックを入れてください"
+              save_failed: "登録の途中で問題が起きました。もう一度お試しください"
+        receipt_registration_form/row:
+          attributes:
+            name:
+              same_as_registered_item: "が登録済みのストックと同じです。ストックから選ぶか、名前を変えてください"
+              same_as_other_new_row: "がほかの新規の行と同じです。名前を変えるか、どちらかのチェックを外してください"
   errors:
     messages:
       not_saved:
@@ -58,6 +67,9 @@ ja:
       submit: "この内容で登録する"
       submitting: "登録中…"
       error_notice: "登録できませんでした。下の内容を確かめて、直してください。"
+      cycle_days_unit: "日"
+      cycle_days_note: "（変更しなくてOK）"
   receipt_registrations:
     create:
       success: "%{count}件の購入記録を登録しました。"
+      success_with_new_items: "新しいストックを%{new_items_count}件作り、%{count}件の購入記録を登録しました。"

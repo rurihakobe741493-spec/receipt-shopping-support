@@ -96,6 +96,16 @@ RSpec.describe Item, type: :model do
     it "1なら有効" do
       expect(build(:item, cycle_days: "1")).to be_valid
     end
+
+    it "365なら有効" do
+      expect(build(:item, cycle_days: "365")).to be_valid
+    end
+
+    it "366なら無効" do
+      item = build(:item, cycle_days: "366")
+      item.valid?
+      expect(item.errors).to be_of_kind(:cycle_days, :less_than_or_equal_to)
+    end
   end
 
   describe "削除" do
