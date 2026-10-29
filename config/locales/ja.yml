@@ -35,8 +35,13 @@ ja:
         receipt_registration_form:
           attributes:
             base:
-              no_selected_rows: 登録する行にチェックを入れてください
-              save_failed: 登録の途中で問題が起きました。もう一度お試しください
+              no_selected_rows: "登録する行にチェックを入れてください"
+              save_failed: "登録の途中で問題が起きました。もう一度お試しください"
+        receipt_registration_form/row:
+          attributes:
+            name:
+              same_as_registered_item: "が登録済みのストックと同じです。ストックから選ぶか、名前を変えてください"
+              same_as_other_new_row: "がほかの新規の行と同じです。名前を変えるか、どちらかのチェックを外してください"
   errors:
     messages:
       not_saved:

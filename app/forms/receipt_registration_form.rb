@@ -120,10 +120,7 @@ class ReceiptRegistrationForm
       rows.each { |row| row.errors.clear }
 
       selected_rows.zip(purchases).each do |row, purchase|
-        # 新しい品目のエラーは、行の同じ項目（品目名・周期）に移す
-        if row.new_item? && purchase.item.invalid?
-          purchase.item.errors.each { |error| row.errors.import(error) }
-        end
+        import_item_errors(row, purchase.item) if row.new_item? && purchase.item.invalid?
 
         next if purchase.valid?
 
@@ -140,7 +137,33 @@ class ReceiptRegistrationForm
         end
       end
 
+      add_same_name_errors
+
       # 行にエラーがあれば、フォームも無効にする（validates_associated と同じ形。この文は画面には出さない）
       errors.add(:rows, :invalid) if rows.any? { |row| row.errors.any? }
+    end
+
+    # 新しい品目のエラーを、行の同じ項目（品目名・周期）に移す
+    # 登録済みの品目と同じ名前は、ストックから選ぶよう案内する文に付け替える（品目の文は、ストック詳細の編集でも使うため）
+    def import_item_errors(row, item)
+      item.errors.each do |error|
+        if error.attribute == :name && error.type == :taken
+          row.errors.add(:name, :same_as_registered_item)
+        else
+          row.errors.import(error)
+        end
+      end
+    end
+
+    # 新規の行どうしで、整えたあとの品目名が同じなら、その行すべてに文を出す
+    # （品目の検証は保存済みの品目としか比べないため。登録済みの品目と同じ行は、そちらの文だけにする）
+    def add_same_name_errors
+      selected_rows.select(&:new_item?).group_by { |row| Item.normalize_value_for(:name, row.name) }.each do |name, same_rows|
+        next if name.blank? || same_rows.size < 2
+
+        same_rows.each do |row|
+          row.errors.add(:name, :same_as_other_new_row) unless row.errors.include?(:name)
+        end
+      end
     end
 end
