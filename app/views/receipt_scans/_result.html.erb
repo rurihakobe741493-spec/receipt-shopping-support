@@ -47,11 +47,25 @@
 
     <p class="text-neutral-300"><%= t(".instruction") %></p>
 
-    <ul class="space-y-3">
-      <%= f.fields_for :rows do |row_form| %>
-        <%= render "receipt_scans/row", row_form:, item_choices: %>
-      <% end %>
-    </ul>
+    <%# 行の一覧と、行を足す部品（add-row）。足した行は、<template> の行を写したもので、一覧の行と同じ部品で描く %>
+    <div class="grid gap-3" data-controller="add-row">
+      <ul class="space-y-3" data-add-row-target="list">
+        <%= f.fields_for :rows do |row_form| %>
+          <%= render "receipt_scans/row", row_form:, item_choices: %>
+        <% end %>
+      </ul>
+      <%# 足す行。番号の目印 NEW_ROW は、足すときに足した時刻の数字に置き換える（初めの状態：チェックあり・選んでください・欄は空・周期は初期値） %>
+      <template data-add-row-target="template">
+        <%= f.fields_for :rows, ReceiptRegistrationForm::Row.new(selected: true), child_index: "NEW_ROW" do |row_form| %>
+          <%= render "receipt_scans/row", row_form:, item_choices: %>
+        <% end %>
+      </template>
+      <%# JavaScript が動かないときは足せないので、初めは hidden にし、add-row の connect で出す。type="button"：押しても登録を送らない %>
+      <button type="button" hidden data-add-row-target="button" data-action="add-row#add"
+              class="w-full cursor-pointer rounded-xl border border-dashed py-3 hover:bg-neutral-800">
+        <span aria-hidden="true">＋ </span><%= t(".add_row") %>
+      </button>
+    </div>
 
     <div class="grid gap-3">
       <%= f.submit t(".submit"), data: { turbo_submits_with: t(".submitting") },
