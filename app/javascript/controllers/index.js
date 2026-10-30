@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import AddRowController from "./add_row_controller"
+application.register("add-row", AddRowController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
