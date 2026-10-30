@@ -1,0 +1,18 @@
+<li class="flex justify-between gap-3 py-3">
+  <div class="min-w-0 wrap-break-word">
+    <p><%= estimate.item.name %></p>
+    <p class="text-sm text-neutral-400">
+      <% if estimate.last_purchased_on %>
+        <%= t(".last_purchased", date: l(estimate.last_purchased_on)) %>
+      <% else %>
+        <%= t(".no_purchases") %>
+      <% end %>
+    </p>
+  </div>
+  <% if estimate.last_purchased_on %>
+    <div class="shrink-0 text-right">
+      <p><%= days_left_text(estimate.days_left) %></p>
+      <p class="text-sm text-neutral-400"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
+    </div>
+  <% end %>
+</li>

@@ -57,6 +57,10 @@ ja:
         external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
         submit: "読み取る"
         submitting: "読み取り中…"
+    row:
+      last_purchased: "最終購入 %{date}"
+      next_purchase: "次回目安 %{date}"
+      no_purchases: "購入記録なし"
     days_left:
       remaining: "あと%{count}日"
       today: "今日が目安"

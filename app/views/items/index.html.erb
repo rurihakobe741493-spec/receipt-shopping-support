@@ -1,6 +1,10 @@
 <div class="flex grow flex-col px-4 pt-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
+  <ul class="mt-4 divide-y border-t">
+    <%= render partial: "items/row", collection: @estimates, as: :estimate %>
+  </ul>
+
   <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 bg-neutral-900 py-4" do |f| %>
     <div class="grid gap-3 group-aria-busy:hidden">
       <%= f.label :image, t(".scan.label"), class: "text-neutral-300" %>
