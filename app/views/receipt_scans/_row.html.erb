@@ -8,7 +8,9 @@
   <div class="flex items-center gap-3">
     <%= row_form.check_box :selected,
           class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
+    <%# placeholder：欄が空のとき（足した行など）に、何を入れる欄かを薄い文字で出す（読み上げ用の aria-label と同じ言葉） %>
     <%= row_form.text_field :receipt_name,
+          placeholder: Purchase.human_attribute_name(:receipt_name),
           class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:receipt_name)),
           aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
           data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
