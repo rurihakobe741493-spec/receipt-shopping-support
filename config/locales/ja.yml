@@ -59,14 +59,15 @@ ja:
       title: "読み取り結果の確認"
       purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。今日の日付が入っていたら、レシートの日付と同じか確かめてください。"
       instruction: "管理しないものは、チェックを外してください"
-      row_checkbox_label: "この行を登録する"
-      select_prompt: "選んでください"
       new_item: "新規として登録"
-      unchecked_note: "チェックを外すと登録されません"
       cancel: "キャンセル"
       submit: "この内容で登録する"
       submitting: "登録中…"
       error_notice: "登録できませんでした。下の内容を確かめて、直してください。"
+    row:
+      row_checkbox_label: "この行を登録する"
+      select_prompt: "選んでください"
+      unchecked_note: "チェックを外すと登録されません"
       cycle_days_unit: "日"
       cycle_days_note: "（変更しなくてOK）"
   receipt_registrations:
