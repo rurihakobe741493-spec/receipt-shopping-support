@@ -47,6 +47,16 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  items:
+    index:
+      title: "ストック一覧"
+      scan:
+        label: "レシートを撮る"
+        reading: "レシートを読み取っています"
+        wait_note_html: "10秒ほどかかることがあります。<br>そのままお待ちください。"
+        external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
+        submit: "読み取る"
+        submitting: "読み取り中…"
   receipt_scans:
     create:
       no_image: "画像を選んでください。"
