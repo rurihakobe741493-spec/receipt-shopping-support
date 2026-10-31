@@ -7,7 +7,7 @@
     <% if @overdue_estimates.any? %>
       <h2 class="mt-6 flex items-center gap-2 text-lg text-red-300">
         <%= render "items/overdue_icon" %>
-        <%= t(".overdue_title") %>
+        <%= t("items.status.overdue") %>
       </h2>
       <ul class="mt-4 divide-y divide-red-900 rounded-xl border border-red-800 bg-red-950 px-4">
         <%= render partial: "items/row", collection: @overdue_estimates, as: :estimate %>
@@ -17,7 +17,7 @@
     <% if @running_low_estimates.any? %>
       <h2 class="mt-6 flex items-center gap-2 text-lg text-yellow-300">
         <%= render "items/running_low_icon" %>
-        <%= t(".running_low_title") %>
+        <%= t("items.status.running_low") %>
       </h2>
       <ul class="mt-4 divide-y divide-yellow-400/20 rounded-xl border border-yellow-500 bg-yellow-400/15 px-4">
         <%= render partial: "items/row", collection: @running_low_estimates, as: :estimate %>

@@ -50,8 +50,6 @@ ja:
   items:
     index:
       title: "ストック一覧"
-      overdue_title: "もう切れているかも"
-      running_low_title: "そろそろ切れそう"
       others_title: "そのほかのストック"
       empty: "まだストックがありません。レシートを撮ると、買ったものをストックとして登録できます。下の「レシートを撮る」から始めてください。"
       scan:
@@ -64,6 +62,9 @@ ja:
     row:
       last_purchased: "最終購入 %{date}"
       next_purchase: "次回目安 %{date}"
+    status:
+      overdue: "もう切れているかも"
+      running_low: "そろそろ切れそう"
       no_purchases: "購入記録なし"
     days_left:
       remaining: "あと%{count}日"
