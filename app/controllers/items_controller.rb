@@ -3,6 +3,10 @@ class ItemsController < ApplicationController
     @estimates = current_user.items.includes(:purchases)
       .map { |item| ConsumptionEstimate.new(item) }
       .sort_by { |estimate| sort_key(estimate) }
+    # 上の2つの枠と、そのほか。select・reject は順を変えないので、どれも sort_key の順のまま
+    @overdue_estimates = @estimates.select(&:overdue?)
+    @running_low_estimates = @estimates.select(&:running_low?)
+    @other_estimates = @estimates.reject { |estimate| estimate.overdue? || estimate.running_low? }
   end
 
   private
