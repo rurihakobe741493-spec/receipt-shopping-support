@@ -21,11 +21,16 @@ class ConsumptionEstimate
 
   # 計算に使う購入日が1日分以下なら品目の周期、2日分以上なら間隔の平均（四捨五入）
   def cycle_days
-    dates = dates_for_cycle
-    return @item.cycle_days if dates.size <= 1
+    return @item.cycle_days unless cycle_from_purchases?
 
+    dates = dates_for_cycle
     # 日付の差は分数（Rational）なので、割ってから丸める（先に整数にすると切り捨てになる）
     ((dates.max - dates.min) / (dates.size - 1)).round
+  end
+
+  # 周期を購入履歴から計算したか（計算に使う購入日が2日分以上）。ストック詳細で、周期の出どころを書き分けるため
+  def cycle_from_purchases?
+    dates_for_cycle.size >= 2
   end
 
   def next_purchase_on
