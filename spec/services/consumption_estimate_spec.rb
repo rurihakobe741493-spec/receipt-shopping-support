@@ -76,6 +76,32 @@ RSpec.describe ConsumptionEstimate do
     end
   end
 
+  describe "#cycle_from_purchases?" do
+    it "購入記録が0件なら、false を返す" do
+      expect(estimate.cycle_from_purchases?).to be(false)
+    end
+
+    it "購入日が1日分なら、false を返す" do
+      expect(estimate("2026-10-01").cycle_from_purchases?).to be(false)
+    end
+
+    it "同じ日の購入が2件だけなら、false を返す" do
+      expect(estimate("2026-10-01", "2026-10-01").cycle_from_purchases?).to be(false)
+    end
+
+    it "購入日が2日分なら、true を返す" do
+      expect(estimate("2026-09-01", "2026-10-01").cycle_from_purchases?).to be(true)
+    end
+
+    it "周期を変えた日の購入は、数に入れる" do
+      expect(estimate("2026-09-01", "2026-10-01", "2026-10-21", cycle_days: 40, cycle_changed_on: "2026-10-01").cycle_from_purchases?).to be(true)
+    end
+
+    it "周期を変えた日の前日の購入は、数に入れない" do
+      expect(estimate("2026-09-01", "2026-10-01", "2026-10-21", cycle_days: 40, cycle_changed_on: "2026-10-02").cycle_from_purchases?).to be(false)
+    end
+  end
+
   describe "#next_purchase_on" do
     it "購入記録が0件なら、nil を返す" do
       expect(estimate.next_purchase_on).to be_nil
