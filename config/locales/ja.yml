@@ -47,6 +47,25 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  items:
+    index:
+      title: "ストック一覧"
+      empty: "まだストックがありません。レシートを撮ると、買ったものをストックとして登録できます。下の「レシートを撮る」から始めてください。"
+      scan:
+        label: "レシートを撮る"
+        reading: "レシートを読み取っています"
+        wait_note_html: "10秒ほどかかることがあります。<br>そのままお待ちください。"
+        external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
+        submit: "読み取る"
+        submitting: "読み取り中…"
+    row:
+      last_purchased: "最終購入 %{date}"
+      next_purchase: "次回目安 %{date}"
+      no_purchases: "購入記録なし"
+    days_left:
+      remaining: "あと%{count}日"
+      today: "今日が目安"
+      overdue: "%{count}日過ぎています"
   receipt_scans:
     create:
       no_image: "画像を選んでください。"

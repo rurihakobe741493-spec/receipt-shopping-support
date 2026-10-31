@@ -2,6 +2,9 @@
 # 購入記録は item.purchases を map で読む。一覧で includes(:purchases) した記録をそのまま使うため、
 # maximum・order・where などの SQL を出すメソッドは使わない
 class ConsumptionEstimate
+  # 一覧で、推定と一緒に品目（品目名など）を読むため
+  attr_reader :item
+
   def initialize(item)
     @item = item
     @today = Date.current
