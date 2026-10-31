@@ -59,6 +59,14 @@ ja:
         external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
         submit: "読み取る"
         submitting: "読み取り中…"
+    show:
+      back: "一覧に戻る"
+      next_purchase: "次回購入目安"
+      last_purchased: "最終購入日"
+      cycle_days_value: "%{count}日"
+      cycle_from_purchases: "（購入履歴から）"
+      cycle_from_setting: "（設定値）"
+      purchases_title: "購入履歴"
     row:
       last_purchased: "最終購入 %{date}"
       next_purchase: "次回目安 %{date}"
