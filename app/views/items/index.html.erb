@@ -4,9 +4,29 @@
   <% if @estimates.empty? %>
     <p class="mt-4 text-neutral-300"><%= t(".empty") %></p>
   <% else %>
-    <ul class="mt-4 divide-y border-t">
-      <%= render partial: "items/row", collection: @estimates, as: :estimate %>
-    </ul>
+    <% if @overdue_estimates.any? %>
+      <h2 class="mt-6 text-lg text-red-300"><%= t(".overdue_title") %></h2>
+      <ul class="mt-4 divide-y divide-red-900 rounded-xl border border-red-800 bg-red-950 px-4">
+        <%= render partial: "items/row", collection: @overdue_estimates, as: :estimate %>
+      </ul>
+    <% end %>
+
+    <% if @running_low_estimates.any? %>
+      <h2 class="mt-6 text-lg text-amber-300"><%= t(".running_low_title") %></h2>
+      <ul class="mt-4 divide-y divide-amber-900 rounded-xl border border-amber-700 bg-amber-950 px-4">
+        <%= render partial: "items/row", collection: @running_low_estimates, as: :estimate %>
+      </ul>
+    <% end %>
+
+    <% if @other_estimates.any? %>
+      <%# 上に枠があるときだけ見出しを出す（枠がないときは、h1 のすぐ下に一覧を置く） %>
+      <% if @overdue_estimates.any? || @running_low_estimates.any? %>
+        <h2 class="mt-6 text-lg"><%= t(".others_title") %></h2>
+      <% end %>
+      <ul class="mt-4 divide-y border-t">
+        <%= render partial: "items/row", collection: @other_estimates, as: :estimate %>
+      </ul>
+    <% end %>
   <% end %>
 
   <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 border-t bg-neutral-900 py-4" do |f| %>
