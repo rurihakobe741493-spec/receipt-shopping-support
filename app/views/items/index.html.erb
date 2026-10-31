@@ -18,14 +18,14 @@
     <% end %>
 
     <% if @running_low_estimates.any? %>
-      <h2 class="mt-6 flex items-center gap-2 text-lg text-amber-300">
+      <h2 class="mt-6 flex items-center gap-2 text-lg text-yellow-300">
         <%# アイコン：Heroicons（MIT、Tailwind Labs）の clock %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="size-5 shrink-0">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
         <%= t(".running_low_title") %>
       </h2>
-      <ul class="mt-4 divide-y divide-amber-900 rounded-xl border border-amber-700 bg-amber-950 px-4">
+      <ul class="mt-4 divide-y divide-yellow-400/20 rounded-xl border border-yellow-500 bg-yellow-400/15 px-4">
         <%= render partial: "items/row", collection: @running_low_estimates, as: :estimate %>
       </ul>
     <% end %>
