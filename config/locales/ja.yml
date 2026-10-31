@@ -50,6 +50,9 @@ ja:
   items:
     index:
       title: "ストック一覧"
+      overdue_title: "もう切れているかも"
+      running_low_title: "そろそろ切れそう"
+      others_title: "そのほかのストック"
       empty: "まだストックがありません。レシートを撮ると、買ったものをストックとして登録できます。下の「レシートを撮る」から始めてください。"
       scan:
         label: "レシートを撮る"
