@@ -115,4 +115,48 @@ RSpec.describe ConsumptionEstimate do
       expect(estimate("2026-10-01", "2026-10-21").days_left).to be_an(Integer)
     end
   end
+
+  describe "#overdue?" do
+    around do |example|
+      travel_to(Date.new(2026, 10, 30)) { example.run }
+    end
+
+    it "購入記録が0件なら、false を返す" do
+      expect(estimate.overdue?).to be(false)
+    end
+
+    it "残り日数が-1なら、true を返す" do
+      expect(estimate("2026-09-29").overdue?).to be(true)
+    end
+
+    it "残り日数が0なら、false を返す" do
+      expect(estimate("2026-09-30").overdue?).to be(false)
+    end
+  end
+
+  describe "#running_low?" do
+    around do |example|
+      travel_to(Date.new(2026, 10, 30)) { example.run }
+    end
+
+    it "購入記録が0件なら、false を返す" do
+      expect(estimate.running_low?).to be(false)
+    end
+
+    it "残り日数が-1なら、false を返す" do
+      expect(estimate("2026-09-29").running_low?).to be(false)
+    end
+
+    it "残り日数が0なら、true を返す" do
+      expect(estimate("2026-09-30").running_low?).to be(true)
+    end
+
+    it "残り日数が7なら、true を返す" do
+      expect(estimate("2026-10-07").running_low?).to be(true)
+    end
+
+    it "残り日数が8なら、false を返す" do
+      expect(estimate("2026-10-08").running_low?).to be(false)
+    end
+  end
 end
