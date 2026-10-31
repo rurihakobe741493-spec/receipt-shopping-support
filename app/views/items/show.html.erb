@@ -1,0 +1,60 @@
+<div class="px-4 py-10">
+  <%= link_to root_path, class: "inline-flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300" do %>
+    <%# アイコン：Heroicons（MIT、Tailwind Labs）の chevron-left %>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="size-4 shrink-0">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+    </svg>
+    <%= t(".back") %>
+  <% end %>
+
+  <h1 class="mt-3 text-xl wrap-break-word"><%= @item.name %></h1>
+
+  <%# 要約の箱。トップの枠と同じ判定で、もう切れているかも（赤）・そろそろ切れそう（黄色）の色にする %>
+  <div class="<%= class_names("mt-4 rounded-xl border px-4 py-3",
+                    "border-red-800 bg-red-950": @estimate.overdue?,
+                    "border-yellow-500 bg-yellow-400/15": @estimate.running_low?) %>">
+    <% if @estimate.overdue? %>
+      <p class="mb-2 flex items-center gap-2 text-red-300">
+        <%= render "items/overdue_icon" %>
+        <%= t("items.status.overdue") %>
+      </p>
+    <% elsif @estimate.running_low? %>
+      <p class="mb-2 flex items-center gap-2 text-yellow-300">
+        <%= render "items/running_low_icon" %>
+        <%= t("items.status.running_low") %>
+      </p>
+    <% end %>
+
+    <%# 購入記録が0件の品目（#34まで仮の表示）は、次回購入目安と最終購入日の代わりに「購入記録なし」を出す %>
+    <% if @estimate.last_purchased_on.nil? %>
+      <p class="mb-2 text-neutral-400"><%= t("items.status.no_purchases") %></p>
+    <% end %>
+    <dl class="grid gap-2">
+      <% if @estimate.last_purchased_on %>
+        <div class="flex justify-between gap-3">
+          <dt class="text-neutral-400"><%= t(".next_purchase") %></dt>
+          <dd class="text-right">
+            <%= days_left_text(@estimate.days_left) %>
+            <span class="block text-sm text-neutral-400"><%= l(@estimate.next_purchase_on) %></span>
+          </dd>
+        </div>
+        <div class="flex justify-between gap-3">
+          <dt class="text-neutral-400"><%= t(".last_purchased") %></dt>
+          <dd class="text-right"><%= l(@estimate.last_purchased_on) %></dd>
+        </div>
+      <% end %>
+      <div class="flex justify-between gap-3">
+        <dt class="text-neutral-400"><%= Item.human_attribute_name(:cycle_days) %></dt>
+        <%# 数字と出どころの間に空白が入らないように、1行に書く %>
+        <dd class="text-right"><%= t(".cycle_days_value", count: @estimate.cycle_days) %><span class="text-sm text-neutral-400"><%= @estimate.cycle_from_purchases? ? t(".cycle_from_purchases") : t(".cycle_from_setting") %></span></dd>
+      </div>
+    </dl>
+  </div>
+
+  <% if @estimate.last_purchased_on %>
+    <h2 class="mt-6 text-lg"><%= t(".purchases_title") %></h2>
+    <ul class="mt-4 divide-y border-t">
+      <%= render @purchases %>
+    </ul>
+  <% end %>
+</div>
