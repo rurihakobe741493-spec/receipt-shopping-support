@@ -70,6 +70,7 @@ ja:
       cycle_from_purchases: "（購入履歴から）"
       cycle_from_setting: "（設定値）"
       purchases_title: "購入履歴"
+      purchases_empty: "このストックを選んでレシートを登録すると、次回購入目安を計算します。"
     edit:
       title: "ストックの編集"
       cycle_days_unit: "日"
@@ -91,6 +92,12 @@ ja:
       remaining: "あと%{count}日"
       today: "今日が目安"
       overdue: "%{count}日過ぎています"
+  purchases:
+    purchase:
+      destroy_label: "%{date} の「%{receipt_name}」を削除"
+      confirm: "%{date} の「%{receipt_name}」を削除しますか？元に戻せません。"
+    destroy:
+      success: "%{date} の購入記録を削除しました。"
   receipt_scans:
     create:
       no_image: "画像を選んでください。"
