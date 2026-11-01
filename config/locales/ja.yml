@@ -63,12 +63,23 @@ ja:
         submitting: "読み取り中…"
     show:
       back: "一覧に戻る"
+      edit: "編集"
       next_purchase: "次回購入目安"
       last_purchased: "最終購入日"
       cycle_days_value: "%{count}日"
       cycle_from_purchases: "（購入履歴から）"
       cycle_from_setting: "（設定値）"
       purchases_title: "購入履歴"
+    edit:
+      title: "ストックの編集"
+      cycle_days_unit: "日"
+      cycle_days_note: "周期を変えると、今日からの購入をもとに補正し直します"
+      submit: "保存する"
+      submitting: "保存中…"
+      cancel: "キャンセル"
+    update:
+      success: "ストックを更新しました。"
+      success_with_cycle_change: "ストックを更新しました。周期は、今日からの購入をもとに補正し直します。"
     row:
       last_purchased: "最終購入 %{date}"
       next_purchase: "次回目安 %{date}"
