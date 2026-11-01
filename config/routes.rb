@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   end
   root "static_pages#top"
 
+  # 一覧は / だけにするので、index は作らない（編集・削除のアクションは、この行に足す）
+  resources :items, only: [ :show ]
   resources :receipt_scans, only: [ :create ]
   resources :receipt_registrations, only: [ :create ]
 end

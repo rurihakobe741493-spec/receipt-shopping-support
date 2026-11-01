@@ -1,18 +1,24 @@
-<li class="flex justify-between gap-3 py-3">
-  <div class="min-w-0 wrap-break-word">
-    <p><%= estimate.item.name %></p>
-    <p class="text-sm text-neutral-400">
-      <% if estimate.last_purchased_on %>
-        <%= t(".last_purchased", date: l(estimate.last_purchased_on)) %>
-      <% else %>
-        <%= t(".no_purchases") %>
-      <% end %>
-    </p>
-  </div>
-  <% if estimate.last_purchased_on %>
-    <div class="shrink-0 text-right">
-      <p><%= days_left_text(estimate.days_left) %></p>
-      <p class="text-sm text-neutral-400"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
+<li>
+  <%= link_to item_path(estimate.item), class: "-mx-2 flex gap-3 rounded-lg px-2 py-3 hover:bg-white/5 active:bg-white/10" do %>
+    <div class="min-w-0 grow wrap-break-word">
+      <p><%= estimate.item.name %></p>
+      <p class="text-sm text-neutral-400">
+        <% if estimate.last_purchased_on %>
+          <%= t(".last_purchased", date: l(estimate.last_purchased_on)) %>
+        <% else %>
+          <%= t("items.status.no_purchases") %>
+        <% end %>
+      </p>
     </div>
+    <% if estimate.last_purchased_on %>
+      <div class="shrink-0 text-right">
+        <p><%= days_left_text(estimate.days_left) %></p>
+        <p class="text-sm text-neutral-400"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
+      </div>
+    <% end %>
+    <%# アイコン：Heroicons（MIT、Tailwind Labs）の chevron-right。押すとストック詳細が開くことを示す %>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="size-5 shrink-0 self-center text-neutral-400">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+    </svg>
   <% end %>
 </li>
