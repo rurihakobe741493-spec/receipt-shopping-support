@@ -29,7 +29,7 @@
       </p>
     <% end %>
 
-    <%# 購入記録が0件の品目（#34まで仮の表示）は、次回購入目安と最終購入日の代わりに「購入記録なし」を出す %>
+    <%# 購入記録が0件の品目（最後の1件を消したときなど）は、次回購入目安と最終購入日の代わりに「購入記録なし」を出す %>
     <% if @estimate.last_purchased_on.nil? %>
       <p class="mb-2 text-neutral-400"><%= t("items.status.no_purchases") %></p>
     <% end %>
@@ -55,10 +55,13 @@
     </dl>
   </div>
 
+  <h2 class="mt-6 text-lg"><%= t(".purchases_title") %></h2>
   <% if @estimate.last_purchased_on %>
-    <h2 class="mt-6 text-lg"><%= t(".purchases_title") %></h2>
     <ul class="mt-4 divide-y border-t">
       <%= render @purchases %>
     </ul>
+  <% else %>
+    <%# 0件のときも見出しは残し、登録し直すと次回購入目安が出ることを一言で伝える %>
+    <p class="mt-4 text-neutral-300"><%= t(".purchases_empty") %></p>
   <% end %>
 </div>

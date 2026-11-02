@@ -17,8 +17,11 @@ Rails.application.routes.draw do
   end
   root "static_pages#top"
 
-  # 一覧は / だけにするので、index は作らない（削除のアクションも、この行に足す）
-  resources :items, only: [ :show, :edit, :update ]
+  # 一覧は / だけにするので、index は作らない（品目の削除のアクションも、この行に足す）
+  resources :items, only: [ :show, :edit, :update ] do
+    # 購入記録は、ログイン中のユーザーの品目を経由して探すので、品目の下に入れる
+    resources :purchases, only: [ :destroy ]
+  end
   resources :receipt_scans, only: [ :create ]
   resources :receipt_registrations, only: [ :create ]
 end
