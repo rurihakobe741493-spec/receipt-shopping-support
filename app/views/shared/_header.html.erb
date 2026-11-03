@@ -2,14 +2,14 @@
   <%= link_to app_name, root_path, class: "text-lg font-bold" %>
   <nav class="flex items-center gap-4">
     <% if user_signed_in? %>
-      <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "cursor-pointer text-neutral-300 hover:text-neutral-100" %>
+      <%= button_to t(".sign_out"), destroy_user_session_path, method: :delete, class: "cursor-pointer text-neutral-300 hover:text-neutral-100" %>
     <% else %>
       <%# 今いる画面へのリンクは出さない。current_page? だと失敗して描き直した画面（POST の応答）で false になるので、コントローラーの名前で見る %>
       <% unless controller_name == "sessions" %>
-        <%= link_to "ログイン", new_user_session_path, class: "text-neutral-300 hover:text-neutral-100" %>
+        <%= link_to t(".sign_in"), new_user_session_path, class: "text-neutral-300 hover:text-neutral-100" %>
       <% end %>
       <% unless controller_name == "registrations" %>
-        <%= link_to "新規登録", new_user_registration_path, class: "text-neutral-300 hover:text-neutral-100" %>
+        <%= link_to t(".sign_up"), new_user_registration_path, class: "text-neutral-300 hover:text-neutral-100" %>
       <% end %>
     <% end %>
   </nav>

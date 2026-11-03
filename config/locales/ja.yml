@@ -49,6 +49,11 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  shared:
+    header:
+      sign_out: "ログアウト"
+      sign_in: "ログイン"
+      sign_up: "新規登録"
   items:
     index:
       title: "ストック一覧"
