@@ -64,4 +64,12 @@
     <%# 0件のときも見出しは残し、登録し直すと次回購入目安が出ることを一言で伝える %>
     <p class="mt-4 text-neutral-300"><%= t(".purchases_empty") %></p>
   <% end %>
+
+  <%# 確認の窓（Turbo の data-turbo-confirm）で OK を押したときだけ送る。JavaScript が動かないときは、確認なしで消える %>
+  <%# 消したあとは、詳細の履歴をトップに置き換える（data-turbo-action="replace"）。「戻る」で、消した品目の詳細（404）を開かないように %>
+  <%# 購入記録が0件なら、件数の入らない文にする %>
+  <% confirm = @item.purchases.empty? ? t(".destroy_confirm_no_purchases", name: @item.name) : t(".destroy_confirm", name: @item.name, count: @item.purchases.size) %>
+  <%= button_to t(".destroy"), item_path(@item), method: :delete,
+        form: { class: "mt-8", data: { turbo_action: "replace", turbo_confirm: confirm } },
+        class: "w-full cursor-pointer rounded-lg border border-red-800 px-4 py-3 text-red-300 hover:bg-red-950 disabled:cursor-wait disabled:opacity-50" %>
 </div>

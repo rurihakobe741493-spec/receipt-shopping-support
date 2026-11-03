@@ -71,6 +71,9 @@ ja:
       cycle_from_setting: "（設定値）"
       purchases_title: "購入履歴"
       purchases_empty: "このストックを選んでレシートを登録すると、次回購入目安を計算します。"
+      destroy: "このストックを削除する"
+      destroy_confirm: "「%{name}」を削除しますか？購入記録%{count}件も一緒に削除され、元に戻せません。"
+      destroy_confirm_no_purchases: "「%{name}」を削除しますか？元に戻せません。"
     edit:
       title: "ストックの編集"
       cycle_days_unit: "日"
@@ -81,6 +84,8 @@ ja:
     update:
       success: "ストックを更新しました。"
       success_with_cycle_change: "ストックを更新しました。周期は、今日からの購入をもとに補正し直します。"
+    destroy:
+      success: "「%{name}」を削除しました。"
     row:
       last_purchased: "最終購入 %{date}"
       next_purchase: "次回目安 %{date}"

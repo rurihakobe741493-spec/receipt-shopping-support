@@ -1,5 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: %i[ show edit update ]
+  before_action :set_item, only: %i[ show edit update destroy ]
 
   def index
     @estimates = current_user.items.includes(:purchases)
@@ -28,6 +28,12 @@ class ItemsController < ApplicationController
     else
       render :edit, status: :unprocessable_content
     end
+  end
+
+  # 消したあとはトップへ戻る。購入記録は、モデルの dependent: :destroy で一緒に消える
+  def destroy
+    @item.destroy!
+    redirect_to root_path, notice: t(".success", name: @item.name), status: :see_other
   end
 
   private
