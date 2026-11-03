@@ -1,10 +1,14 @@
-<header class="flex items-center justify-between border-b bg-neutral-950 px-4 py-3">
-  <%= link_to app_name, root_path, class: "text-lg font-bold" %>
-  <nav class="flex items-center gap-4">
+<header class="flex items-center justify-between gap-4 border-b bg-neutral-950 px-4 py-3">
+  <%# 狭い画面では、アプリ名を「…」で切り、右のリンクは折り返さない %>
+  <%= link_to app_name, root_path, class: "min-w-0 truncate text-lg font-bold" %>
+  <nav class="flex shrink-0 items-center gap-4 whitespace-nowrap">
+    <%# 今いる画面へのリンクは出さない。current_page? だと失敗して描き直した画面（POST・PUT の応答）で false になるので、コントローラーの名前で見る %>
     <% if user_signed_in? %>
+      <% unless controller_name == "registrations" %>
+        <%= link_to t(".account"), edit_user_registration_path, class: "text-neutral-300 hover:text-neutral-100" %>
+      <% end %>
       <%= button_to t(".sign_out"), destroy_user_session_path, method: :delete, class: "cursor-pointer text-neutral-300 hover:text-neutral-100" %>
     <% else %>
-      <%# 今いる画面へのリンクは出さない。current_page? だと失敗して描き直した画面（POST の応答）で false になるので、コントローラーの名前で見る %>
       <% unless controller_name == "sessions" %>
         <%= link_to t(".sign_in"), new_user_session_path, class: "text-neutral-300 hover:text-neutral-100" %>
       <% end %>
