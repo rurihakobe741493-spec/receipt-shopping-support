@@ -21,6 +21,8 @@ ja:
       models:
         item:
           attributes:
+            name:
+              taken: "がほかのストックと同じです。名前を変えてください"
             cycle_days:
               out_of_range: "は1〜365の整数で入力してください"
         purchase:
@@ -47,6 +49,60 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  items:
+    index:
+      title: "ストック一覧"
+      others_title: "そのほかのストック"
+      empty: "まだストックがありません。レシートを撮ると、買ったものをストックとして登録できます。下の「レシートを撮る」から始めてください。"
+      scan:
+        label: "レシートを撮る"
+        reading: "レシートを読み取っています"
+        wait_note_html: "10秒ほどかかることがあります。<br>そのままお待ちください。"
+        external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
+        submit: "読み取る"
+        submitting: "読み取り中…"
+    show:
+      back: "一覧に戻る"
+      edit: "編集"
+      next_purchase: "次回購入目安"
+      last_purchased: "最終購入日"
+      cycle_days_value: "%{count}日"
+      cycle_from_purchases: "（購入履歴から）"
+      cycle_from_setting: "（設定値）"
+      purchases_title: "購入履歴"
+      purchases_empty: "このストックを選んでレシートを登録すると、次回購入目安を計算します。"
+      destroy: "このストックを削除する"
+      destroy_confirm: "「%{name}」を削除しますか？購入記録%{count}件も一緒に削除され、元に戻せません。"
+      destroy_confirm_no_purchases: "「%{name}」を削除しますか？元に戻せません。"
+    edit:
+      title: "ストックの編集"
+      cycle_days_unit: "日"
+      cycle_days_note: "周期を変えると、今日からの購入をもとに補正し直します"
+      submit: "保存する"
+      submitting: "保存中…"
+      cancel: "キャンセル"
+    update:
+      success: "ストックを更新しました。"
+      success_with_cycle_change: "ストックを更新しました。周期は、今日からの購入をもとに補正し直します。"
+    destroy:
+      success: "「%{name}」を削除しました。"
+    row:
+      last_purchased: "最終購入 %{date}"
+      next_purchase: "次回目安 %{date}"
+    status:
+      overdue: "もう切れているかも"
+      running_low: "そろそろ切れそう"
+      no_purchases: "購入記録なし"
+    days_left:
+      remaining: "あと%{count}日"
+      today: "今日が目安"
+      overdue: "%{count}日過ぎています"
+  purchases:
+    purchase:
+      destroy_label: "%{date} の「%{receipt_name}」を削除"
+      confirm: "%{date} の「%{receipt_name}」を削除しますか？元に戻せません。"
+    destroy:
+      success: "%{date} の購入記録を削除しました。"
   receipt_scans:
     create:
       no_image: "画像を選んでください。"
@@ -59,14 +115,16 @@ ja:
       title: "読み取り結果の確認"
       purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。今日の日付が入っていたら、レシートの日付と同じか確かめてください。"
       instruction: "管理しないものは、チェックを外してください"
-      row_checkbox_label: "この行を登録する"
-      select_prompt: "選んでください"
+      add_row: "読み取れなかった品目を足す"
       new_item: "新規として登録"
-      unchecked_note: "チェックを外すと登録されません"
       cancel: "キャンセル"
       submit: "この内容で登録する"
       submitting: "登録中…"
       error_notice: "登録できませんでした。下の内容を確かめて、直してください。"
+    row:
+      row_checkbox_label: "この行を登録する"
+      select_prompt: "選んでください"
+      unchecked_note: "チェックを外すと登録されません"
       cycle_days_unit: "日"
       cycle_days_note: "（変更しなくてOK）"
   receipt_registrations:
