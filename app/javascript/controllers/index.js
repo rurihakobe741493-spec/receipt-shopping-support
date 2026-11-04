@@ -15,3 +15,6 @@ application.register("prevent-enter-submit", PreventEnterSubmitController)
 
 import ScrollIntoViewController from "./scroll_into_view_controller"
 application.register("scroll-into-view", ScrollIntoViewController)
+
+import WarnSameDayController from "./warn_same_day_controller"
+application.register("warn-same-day", WarnSameDayController)
