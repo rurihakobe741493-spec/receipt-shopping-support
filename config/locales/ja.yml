@@ -19,6 +19,10 @@ ja:
         receipt_name: レシート表記
     errors:
       models:
+        user:
+          attributes:
+            current_password:
+              invalid: "が違います"
         item:
           attributes:
             name:
@@ -49,6 +53,21 @@ ja:
       not_saved:
         one: 入力内容を確認してください。
         other: 入力内容を確認してください。
+  shared:
+    header:
+      account: "アカウント設定"
+      sign_out: "ログアウト"
+      sign_in: "ログイン"
+      sign_up: "新規登録"
+  devise:
+    registrations:
+      edit:
+        title: "アカウント設定"
+        password_label: "新しいパスワード"
+        password_note: "変えないなら空のまま"
+        password_confirmation_label: "新しいパスワード（確認）"
+        submit: "変更する"
+        submitting: "変更中…"
   items:
     index:
       title: "ストック一覧"
