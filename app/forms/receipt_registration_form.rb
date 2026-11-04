@@ -67,6 +67,15 @@ class ReceiptRegistrationForm
     user.items.order(:name)
   end
 
+  # 品目ごとの購入日（購入日の欄で選べる範囲だけ。ログイン中のユーザーの品目だけ）
+  # 確認画面の JavaScript が、同じ日の警告を出すかを判定するのに使う。キーは品目の id の文字列、値は "2026-09-27" の形の日付の並び
+  def purchased_dates_by_item_id
+    Purchase.where(item: user.items, purchased_on: Purchase.purchased_on_range)
+      .distinct.order(:purchased_on).pluck(:item_id, :purchased_on)
+      .group_by(&:first)
+      .to_h { |item_id, pairs| [ item_id.to_s, pairs.map { |_item_id, purchased_on| purchased_on.iso8601 } ] }
+  end
+
   def save
     return false if invalid?
 
