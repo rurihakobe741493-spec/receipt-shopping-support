@@ -143,6 +143,7 @@ ja:
     row:
       row_checkbox_label: "この行を登録する"
       select_prompt: "選んでください"
+      same_day_warning: "同じ日に登録済みの品目があります"
       unchecked_note: "チェックを外すと登録されません"
       cycle_days_unit: "日"
       cycle_days_note: "（変更しなくてOK）"

@@ -8,7 +8,10 @@
   <h1 class="text-xl"><%= t(".title") %></h1>
 
   <%# novalidate：iPhone の Safari は、送る前に止めても理由を出さないので、ブラウザでは止めず、サーバーの検証の文で知らせる %>
-  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6", data: { controller: "prevent-enter-submit" }, html: { novalidate: true } do |f| %>
+  <%# warn-same-day：既存のストックに、購入日の欄と同じ日の購入記録がある行に警告を出す（判定に使う品目ごとの購入日を、ここで1回だけ渡す） %>
+  <%= form_with model: form, url: receipt_registrations_path, class: "mt-6 space-y-6",
+        data: { controller: "prevent-enter-submit warn-same-day", warn_same_day_purchased_dates_value: form.purchased_dates_by_item_id },
+        html: { novalidate: true } do |f| %>
     <% if form.errors.any? %>
       <div id="registration_errors" data-turbo-temporary data-controller="scroll-into-view" role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
         <p class="font-medium"><%= t(".error_notice") %></p>
@@ -34,7 +37,8 @@
         <%= f.date_field :purchased_on,
               min: purchased_on_range.begin, max: purchased_on_range.end, required: true,
               class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": purchased_on_error),
-              aria: { describedby: purchased_on_describedby, invalid: (true if purchased_on_error) } %>
+              aria: { describedby: purchased_on_describedby, invalid: (true if purchased_on_error) },
+              data: { warn_same_day_target: "purchasedOn", action: "change->warn-same-day#update" } %>
       </div>
       <% if purchased_on_error %>
         <div id="purchased_on_error" class="text-sm text-red-300">
