@@ -292,6 +292,69 @@ RSpec.describe "Items", type: :request do
     end
   end
 
+  describe "DELETE /items/:id（品目の削除）" do
+    let(:user) { create(:user) }
+
+    before { sign_in user }
+
+    it "自分の品目なら、その品目と購入記録を消してトップへ戻し、品目名入りの知らせを出す。ほかの品目の記録は残す" do
+      item = create_item(user, "洗剤", Date.current)
+      create(:purchase, item:)
+      other_item = create_item(user, "スポンジ", Date.current)
+
+      expect { delete item_path(item) }.to change(Item, :count).by(-1).and change(Purchase, :count).by(-2)
+      expect(response).to have_http_status(303)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:notice]).to eq(I18n.t("items.destroy.success", name: "洗剤"))
+      expect(other_item.purchases.count).to eq(1)
+    end
+
+    it "購入記録が0件の品目も消せる" do
+      item = create_item(user, "洗剤")
+
+      expect { delete item_path(item) }.to change(Item, :count).by(-1)
+      expect(response).to have_http_status(303)
+    end
+
+    it "ほかのユーザーの品目なら、404 を返し、消さない" do
+      item = create_item(create(:user), "ほかの人の品目", Date.current)
+
+      expect { delete item_path(item) }.not_to change(Item, :count)
+      expect(response).to have_http_status(404)
+      expect(item.purchases.count).to eq(1)
+    end
+
+    it "ない id なら、404 を返す" do
+      delete item_path(Item.maximum(:id).to_i + 1)
+
+      expect(response).to have_http_status(404)
+    end
+  end
+
+  describe "ストック詳細の削除のボタン" do
+    let(:user) { create(:user) }
+
+    before { sign_in user }
+
+    it "送り先・確認の文（購入記録の件数入り）・履歴の置き換え・ボタンの文字を出す" do
+      item = create_item(user, "洗剤", Date.current)
+      create(:purchase, item:)
+      get item_path(item)
+
+      form = "form[action='#{item_path(item)}'][data-turbo-action='replace']"
+      expect(response.body).to have_css("#{form}[data-turbo-confirm='#{I18n.t("items.show.destroy_confirm", name: "洗剤", count: 2)}']")
+      expect(response.body).to have_css("#{form} input[name='_method'][value='delete']", visible: :all)
+      expect(response.body).to have_css("#{form} button", text: I18n.t("items.show.destroy"))
+    end
+
+    it "購入記録が0件なら、件数の入らない確認の文にする" do
+      item = create_item(user, "洗剤")
+      get item_path(item)
+
+      expect(response.body).to have_css("form[action='#{item_path(item)}'][data-turbo-confirm='#{I18n.t("items.show.destroy_confirm_no_purchases", name: "洗剤")}']")
+    end
+  end
+
   describe "ログインしていないとき" do
     it "詳細・編集・保存は、ログイン画面へ送る" do
       item = create(:item)
@@ -305,6 +368,13 @@ RSpec.describe "Items", type: :request do
       patch item_path(item), params: { item_edit_form: { name: "書き換えた名前" } }
       expect(response).to redirect_to(new_user_session_path)
       expect(item.reload.name).not_to eq("書き換えた名前")
+    end
+
+    it "削除は、ログイン画面へ送り、消さない" do
+      item = create(:item)
+
+      expect { delete item_path(item) }.not_to change(Item, :count)
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 end
