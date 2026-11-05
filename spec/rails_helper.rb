@@ -71,6 +71,15 @@ RSpec.configure do |config|
   # travel_to などの時間操作メソッドを使えるようにする
   config.include ActiveSupport::Testing::TimeHelpers
 
+  # sign_in などのログインのメソッドを request spec で使えるようにする
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # 本物の Cloud Vision API を呼ばないようにする（呼ぶと、その場でテストが落ちる）
+  # 読み取りの結果が要るテストでは、ReceiptOcrService.call を差し替える
+  config.before do
+    allow(Google::Cloud::Vision).to receive(:image_annotator).and_raise("本物の Cloud Vision API を呼ぼうとしました。ReceiptOcrService.call を差し替えてください")
+  end
+
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
