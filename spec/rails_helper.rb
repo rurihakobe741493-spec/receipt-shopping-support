@@ -74,6 +74,9 @@ RSpec.configure do |config|
   # sign_in などのログインのメソッドを request spec で使えるようにする
   config.include Devise::Test::IntegrationHelpers, type: :request
 
+  # have_css・have_field などで、request spec の応答の HTML を調べられるようにする
+  config.include Capybara::RSpecMatchers, type: :request
+
   # 本物の Cloud Vision API を呼ばないようにする（呼ぶと、その場でテストが落ちる）
   # 読み取りの結果が要るテストでは、ReceiptOcrService.call を差し替える
   config.before do
