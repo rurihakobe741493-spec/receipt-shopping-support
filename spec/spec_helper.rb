@@ -15,7 +15,10 @@
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require "simplecov"
-SimpleCov.start "rails"
+SimpleCov.start "rails" do
+  # CI のときだけ、行のカバレッジが下回ったら失敗にする（手元で1つのファイルだけ流すと数字が下がり、毎回失敗になるため）
+  coverage :line, minimum: 99 if ENV["CI"]
+end
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

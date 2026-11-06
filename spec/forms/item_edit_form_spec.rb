@@ -77,5 +77,14 @@ RSpec.describe ItemEditForm do
       create(:item, name: "ティッシュ")
       expect(edit_form(item, name: "ティッシュ").save).to be(true)
     end
+
+    it "検証のあとに、同じ名前がほかで保存されて DB で止まったら、品目名の重複のエラーにする" do
+      item = create(:item)
+      form = edit_form(item, name: "ティッシュ")
+      # 2つのタブで同時に保存したときのように、検証は通り、保存のときに DB のユニークインデックスで止まる
+      allow(item).to receive(:save!).and_raise(ActiveRecord::RecordNotUnique)
+      expect(form.save).to be(false)
+      expect(form.errors).to be_of_kind(:name, :taken)
+    end
   end
 end
