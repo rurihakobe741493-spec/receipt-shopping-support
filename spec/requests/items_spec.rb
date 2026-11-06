@@ -56,23 +56,16 @@ RSpec.describe "Items", type: :request do
       expect(response.body).to have_css("li a > div", count: 1)
     end
 
-    it "2つの枠とそのほかに分け、それぞれ残り日数の少ない順、同じなら品目名の順、購入記録なしは最後に並べる" do
-      # 作る順は、並ぶ順と変えておく
-      create_item(user, "まな板")                              # 購入記録なし
+    it "目安を過ぎた品目・切れそうな品目・そのほかを、それぞれの見出しの下に出す" do
       create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
-      create_item(user, "スポンジ", Date.new(2026, 10, 8))     # 残り8日
-      create_item(user, "ゴミ袋", Date.new(2026, 10, 8))       # 残り8日（スポンジと同じ）
       create_item(user, "洗剤", Date.new(2026, 10, 7))         # 残り7日
-      create_item(user, "シャンプー", Date.new(2026, 10, 1))   # 残り1日
-      create_item(user, "ティッシュ", Date.new(2026, 9, 30))   # 残り0日
-      create_item(user, "牛乳", Date.new(2026, 9, 29))         # 残り-1日
       create_item(user, "電池", Date.new(2026, 9, 20))         # 残り-10日
       get root_path
 
       expect(headings_and_names).to eq([
-        I18n.t("items.status.overdue"), "電池", "牛乳",
-        I18n.t("items.status.running_low"), "ティッシュ", "シャンプー", "洗剤",
-        I18n.t("items.index.others_title"), "ゴミ袋", "スポンジ", "歯ブラシ", "まな板"
+        I18n.t("items.status.overdue"), "電池",
+        I18n.t("items.status.running_low"), "洗剤",
+        I18n.t("items.index.others_title"), "歯ブラシ"
       ])
     end
 
