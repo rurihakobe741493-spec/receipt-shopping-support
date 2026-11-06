@@ -1,36 +1,36 @@
 <div class="flex grow flex-col px-4 pt-10">
   <h1 class="text-xl"><%= t(".title") %></h1>
 
-  <% if @estimates.empty? %>
+  <% if @stock_list.empty? %>
     <p class="mt-4 text-neutral-300"><%= t(".empty") %></p>
   <% else %>
-    <% if @overdue_estimates.any? %>
+    <% if @stock_list.overdue.any? %>
       <h2 class="mt-6 flex items-center gap-2 text-lg text-red-300">
         <%= render "items/overdue_icon" %>
         <%= t("items.status.overdue") %>
       </h2>
       <ul class="mt-4 divide-y divide-red-900 rounded-xl border border-red-800 bg-red-950 px-4">
-        <%= render partial: "items/row", collection: @overdue_estimates, as: :estimate %>
+        <%= render partial: "items/row", collection: @stock_list.overdue, as: :estimate %>
       </ul>
     <% end %>
 
-    <% if @running_low_estimates.any? %>
+    <% if @stock_list.running_low.any? %>
       <h2 class="mt-6 flex items-center gap-2 text-lg text-yellow-300">
         <%= render "items/running_low_icon" %>
         <%= t("items.status.running_low") %>
       </h2>
       <ul class="mt-4 divide-y divide-yellow-400/20 rounded-xl border border-yellow-500 bg-yellow-400/15 px-4">
-        <%= render partial: "items/row", collection: @running_low_estimates, as: :estimate %>
+        <%= render partial: "items/row", collection: @stock_list.running_low, as: :estimate %>
       </ul>
     <% end %>
 
-    <% if @other_estimates.any? %>
+    <% if @stock_list.others.any? %>
       <%# 上に枠があるときだけ見出しを出す（枠がないときは、h1 のすぐ下に一覧を置く） %>
-      <% if @overdue_estimates.any? || @running_low_estimates.any? %>
+      <% if @stock_list.overdue.any? || @stock_list.running_low.any? %>
         <h2 class="mt-6 text-lg"><%= t(".others_title") %></h2>
       <% end %>
       <ul class="mt-4 divide-y border-t">
-        <%= render partial: "items/row", collection: @other_estimates, as: :estimate %>
+        <%= render partial: "items/row", collection: @stock_list.others, as: :estimate %>
       </ul>
     <% end %>
   <% end %>
