@@ -136,6 +136,13 @@ RSpec.describe "ReceiptRegistrations", type: :request do
       expect(html).to have_css("ul li", text: "ストックを選んでください")
     end
 
+    it "行の文字列（レシート表記）が空なら、行の下にその文を出す" do
+      post receipt_registrations_path, params: registration_params([ existing_row(create(:item, user:), receipt_name: "") ])
+
+      expect(response).to have_http_status(422)
+      expect(html).to have_css("ul li", text: "レシート表記を入力してください")
+    end
+
     it "ほかのユーザーの品目の id を送っても、紐付けずに 422 を返す" do
       other_item = create(:item)
       post receipt_registrations_path, params: registration_params([ existing_row(other_item) ])
