@@ -1,8 +1,5 @@
 # app/controllers/receipt_scans_controller.rb
 class ReceiptScansController < ApplicationController
-  ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/webp].freeze
-  MAX_IMAGE_SIZE = 7.megabytes
-
   before_action :check_image
 
   def create
@@ -20,14 +17,9 @@ class ReceiptScansController < ApplicationController
   end
 
   private
+    # 読み取りに進めてよい画像でなければ、読み取らずにトップへ戻す（確かめの決まりは ReceiptScanForm）
     def check_image
-      message = image_error_message(params[:image])
-      redirect_to root_path, alert: message, status: :see_other if message
-    end
-
-    def image_error_message(image)
-      return t(".no_image") unless image.is_a?(ActionDispatch::Http::UploadedFile)
-      return t(".invalid_type") unless ALLOWED_CONTENT_TYPES.include?(image.content_type)
-      t(".too_large", size: MAX_IMAGE_SIZE / 1.megabyte) if image.size > MAX_IMAGE_SIZE
+      scan_form = ReceiptScanForm.new(image: params[:image])
+      redirect_to root_path, alert: scan_form.errors.first.message, status: :see_other if scan_form.invalid?
     end
 end

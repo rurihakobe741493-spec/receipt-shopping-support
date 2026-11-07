@@ -48,6 +48,12 @@ ja:
             name:
               same_as_registered_item: "が登録済みのストックと同じです。ストックから選ぶか、名前を変えてください"
               same_as_other_new_row: "がほかの新規の行と同じです。名前を変えるか、どちらかのチェックを外してください"
+        receipt_scan_form:
+          attributes:
+            image:
+              no_image: "画像を選んでください。"
+              invalid_type: "JPEG・PNG・WEBP の画像を選んでください。"
+              too_large: "画像が大きすぎます（%{size}MBまで）。"
   errors:
     messages:
       not_saved:
@@ -124,9 +130,6 @@ ja:
       success: "%{date} の購入記録を削除しました。"
   receipt_scans:
     create:
-      no_image: "画像を選んでください。"
-      invalid_type: "JPEG・PNG・WEBP の画像を選んでください。"
-      too_large: "画像が大きすぎます（%{size}MBまで）。"
       no_text: "レシートの文字を読み取れませんでした。明るい場所で、レシート全体を画面いっぱいに写して撮り直してください。"
       no_item_lines: "レシートから品目を見つけられませんでした。レシート全体を画面いっぱいに写して撮り直してください。"
       ocr_error: "読み取りの途中で問題が起きました。少し時間をおいて、もう一度お試しください。続くときは、レシートを撮り直してください。"

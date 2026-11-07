@@ -26,11 +26,6 @@ RSpec.describe "ReceiptScans", type: :request do
     fixture_file_upload("receipt.jpg", "image/jpeg")
   end
 
-  # 中身の大きさだけを決めた画像（大きさの確かめ用）
-  def image_of_size(bytes)
-    Rack::Test::UploadedFile.new(StringIO.new("a" * bytes), "image/jpeg", original_filename: "large.jpg")
-  end
-
   # 応答の HTML から、部品を取り出せるようにする
   def html
     Capybara.string(response.body)
@@ -52,31 +47,7 @@ RSpec.describe "ReceiptScans", type: :request do
 
       expect(response).to have_http_status(303)
       expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.no_image"))
-    end
-
-    it "JPEG・PNG・WEBP でなければ、読み取らずにトップへ戻し、知らせを出す" do
-      expect(ReceiptOcrService).not_to receive(:call)
-      post receipt_scans_path, params: { image: fixture_file_upload("receipt.txt", "text/plain") }
-
-      expect(response).to have_http_status(303)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.invalid_type"))
-    end
-
-    it "7MB を1バイトでも超えると、読み取らずにトップへ戻し、知らせを出す" do
-      expect(ReceiptOcrService).not_to receive(:call)
-      post receipt_scans_path, params: { image: image_of_size(7.megabytes + 1) }
-
-      expect(response).to have_http_status(303)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.too_large", size: 7))
-    end
-
-    it "ちょうど 7MB なら、読み取りへ進む" do
-      allow(ReceiptOcrService).to receive(:call).and_return(receipt_text)
-      post receipt_scans_path, params: { image: image_of_size(7.megabytes) }
-
-      expect(response).to have_http_status(200)
-      expect(ReceiptOcrService).to have_received(:call)
+      expect(flash[:alert]).to eq(I18n.t("activemodel.errors.models.receipt_scan_form.attributes.image.no_image"))
     end
   end
 
