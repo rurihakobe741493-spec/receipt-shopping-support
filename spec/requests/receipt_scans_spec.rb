@@ -52,7 +52,7 @@ RSpec.describe "ReceiptScans", type: :request do
 
       expect(response).to have_http_status(303)
       expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.no_image"))
+      expect(flash[:alert]).to eq(I18n.t("activemodel.errors.models.receipt_scan_form.attributes.image.no_image"))
     end
 
     it "JPEG・PNG・WEBP でなければ、読み取らずにトップへ戻し、知らせを出す" do
@@ -60,7 +60,7 @@ RSpec.describe "ReceiptScans", type: :request do
       post receipt_scans_path, params: { image: fixture_file_upload("receipt.txt", "text/plain") }
 
       expect(response).to have_http_status(303)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.invalid_type"))
+      expect(flash[:alert]).to eq(I18n.t("activemodel.errors.models.receipt_scan_form.attributes.image.invalid_type"))
     end
 
     it "7MB を1バイトでも超えると、読み取らずにトップへ戻し、知らせを出す" do
@@ -68,7 +68,7 @@ RSpec.describe "ReceiptScans", type: :request do
       post receipt_scans_path, params: { image: image_of_size(7.megabytes + 1) }
 
       expect(response).to have_http_status(303)
-      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.too_large", size: 7))
+      expect(flash[:alert]).to eq(I18n.t("activemodel.errors.models.receipt_scan_form.attributes.image.too_large", size: 7))
     end
 
     it "ちょうど 7MB なら、読み取りへ進む" do
