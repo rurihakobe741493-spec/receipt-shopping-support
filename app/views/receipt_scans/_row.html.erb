@@ -11,33 +11,33 @@
     <%# placeholder：欄が空のとき（足した行など）に、何を入れる欄かを薄い文字で出す（読み上げ用の aria-label と同じ言葉） %>
     <%= row_form.text_field :receipt_name,
           placeholder: Purchase.human_attribute_name(:receipt_name),
-          class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:receipt_name)),
+          class: class_names("min-w-0 grow rounded-xl border px-4 py-3 placeholder:text-stone-500", "border-stone-500": !row.errors.include?(:receipt_name), "border-red-600": row.errors.include?(:receipt_name)),
           aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
           data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
   </div>
   <div class="hidden items-center gap-3 pl-8 group-has-[input:checked]:flex">
-    <%= row_form.label :item_id, class: "w-16 shrink-0 text-neutral-300" %>
+    <%= row_form.label :item_id, class: "w-16 shrink-0 text-stone-600" %>
     <%= row_form.select :item_id, item_choices, { prompt: t(".select_prompt") },
-          class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": row.errors.include?(:item_id)),
+          class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": !row.errors.include?(:item_id), "border-red-600": row.errors.include?(:item_id)),
           aria: { invalid: (true if row.errors.include?(:item_id)) },
           data: { action: "change->warn-same-day#update" } %>
   </div>
   <%# 同じ日の警告。初めは hidden で、warn-same-day が出し入れする（JavaScript が動かないときは出ない）。チェックを外した行では CSS で隠す %>
   <%# pl-27：文の始まりを「ストック」の選択欄にそろえる（行の字下げ pl-8 ＋ ラベル w-16 ＋ 間 gap-3） %>
-  <p hidden data-warn-same-day-target="warning" class="hidden pl-27 text-sm text-amber-300 group-has-[input:checked]:block"><%= t(".same_day_warning") %></p>
+  <p hidden data-warn-same-day-target="warning" class="hidden pl-27 text-sm text-amber-700 group-has-[input:checked]:block"><%= t(".same_day_warning") %></p>
   <%# 品目名と周期は、チェックを入れ、「新規として登録」を選んだ行でだけ出す（CSS だけで出し分ける。value=new は Row::NEW_ITEM_ID と同じ値） %>
   <%# grid-cols-1：列の最小の幅を0にして、狭い画面で中身が枠の右へはみ出さないようにする %>
   <div class="hidden grid-cols-1 gap-3 pl-8 group-has-[input:checked]:group-has-[option[value=new]:checked]:grid">
     <div class="grid grid-cols-1 gap-1">
       <div class="flex items-center gap-3">
-        <%= row_form.label :name, class: "w-16 shrink-0 text-neutral-300" %>
+        <%= row_form.label :name, class: "w-16 shrink-0 text-stone-600" %>
         <%= row_form.text_field :name,
-              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": name_messages.any?),
+              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": name_messages.none?, "border-red-600": name_messages.any?),
               aria: { describedby: (row_form.field_id(:name, :error) if name_messages.any?), invalid: (true if name_messages.any?) },
               data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
       </div>
       <% if name_messages.any? %>
-        <div id="<%= row_form.field_id(:name, :error) %>" class="pl-19 text-sm text-red-300">
+        <div id="<%= row_form.field_id(:name, :error) %>" class="pl-19 text-sm text-red-700">
           <% name_messages.each do |message| %>
             <p><%= message %></p>
           <% end %>
@@ -46,29 +46,29 @@
     </div>
     <div class="grid grid-cols-1 gap-1">
       <div class="flex items-center gap-3">
-        <%= row_form.label :cycle_days, class: "w-16 shrink-0 text-neutral-300" %>
+        <%= row_form.label :cycle_days, class: "w-16 shrink-0 text-stone-600" %>
         <%= row_form.number_field :cycle_days,
               min: 1, max: Item::MAX_CYCLE_DAYS, step: 1, required: true, inputmode: "numeric",
-              class: class_names("w-24 rounded-xl border px-4 py-3", "border-red-400": cycle_days_messages.any?),
+              class: class_names("w-24 rounded-xl border px-4 py-3", "border-stone-500": cycle_days_messages.none?, "border-red-600": cycle_days_messages.any?),
               aria: { describedby: (row_form.field_id(:cycle_days, :error) if cycle_days_messages.any?), invalid: (true if cycle_days_messages.any?) },
               data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
         <span><%= t(".cycle_days_unit") %></span>
       </div>
       <%# 欄の下には、エラーがあればその文を、なければ一言を出す（同じ位置。一言とエラーの文が食い違って見えないように） %>
       <% if cycle_days_messages.any? %>
-        <div id="<%= row_form.field_id(:cycle_days, :error) %>" class="pl-19 text-sm text-red-300">
+        <div id="<%= row_form.field_id(:cycle_days, :error) %>" class="pl-19 text-sm text-red-700">
           <% cycle_days_messages.each do |message| %>
             <p><%= message %></p>
           <% end %>
         </div>
       <% else %>
-        <p class="pl-19 text-sm text-neutral-400"><%= t(".cycle_days_note") %></p>
+        <p class="pl-19 text-sm text-stone-600"><%= t(".cycle_days_note") %></p>
       <% end %>
     </div>
   </div>
-  <p class="pl-8 text-sm text-neutral-400 group-has-[input:checked]:hidden"><%= t(".unchecked_note") %></p>
+  <p class="pl-8 text-sm text-stone-600 group-has-[input:checked]:hidden"><%= t(".unchecked_note") %></p>
   <% if row_messages.any? %>
-    <div class="hidden pl-8 text-sm text-red-300 group-has-[input:checked]:block">
+    <div class="hidden pl-8 text-sm text-red-700 group-has-[input:checked]:block">
       <% row_messages.each do |message| %>
         <p><%= message %></p>
       <% end %>
