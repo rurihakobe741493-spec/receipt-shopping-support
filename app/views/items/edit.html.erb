@@ -6,12 +6,12 @@
   <%# novalidate：ブラウザの送る前の検証をやめる（周期の初期値が365を超える品目でも、品目名だけ直して保存できるように。iPhone の Safari は理由を出さずに止めるため） %>
   <%= form_with model: @form, url: item_path(@item), method: :patch, class: "mt-6 space-y-6", html: { novalidate: true } do |f| %>
     <div>
-      <%= f.label :name, class: "mb-2 block text-neutral-300" %>
+      <%= f.label :name, class: "mb-2 block text-stone-600" %>
       <%= f.text_field :name,
-            class: class_names("w-full rounded-xl border px-4 py-3", "border-red-400": name_messages.any?),
+            class: class_names("w-full rounded-xl border px-4 py-3", "border-stone-500": name_messages.none?, "border-red-600": name_messages.any?),
             aria: { describedby: (f.field_id(:name, :error) if name_messages.any?), invalid: (true if name_messages.any?) } %>
       <% if name_messages.any? %>
-        <div id="<%= f.field_id(:name, :error) %>" class="mt-2 text-sm text-red-300">
+        <div id="<%= f.field_id(:name, :error) %>" class="mt-2 text-sm text-red-700">
           <% name_messages.each do |message| %>
             <p><%= message %></p>
           <% end %>
@@ -20,24 +20,24 @@
     </div>
 
     <div>
-      <%= f.label :cycle_days, class: "mb-2 block text-neutral-300" %>
+      <%= f.label :cycle_days, class: "mb-2 block text-stone-600" %>
       <div class="flex items-center gap-3">
         <%# 一言はいつも、エラーの文はあるときだけ、欄と結ぶ（読み上げで欄に入ると、両方が読まれる） %>
         <%= f.number_field :cycle_days,
               min: 1, max: Item::MAX_CYCLE_DAYS, step: 1, required: true, inputmode: "numeric",
-              class: class_names("w-24 rounded-xl border px-4 py-3", "border-red-400": cycle_days_messages.any?),
+              class: class_names("w-24 rounded-xl border px-4 py-3", "border-stone-500": cycle_days_messages.none?, "border-red-600": cycle_days_messages.any?),
               aria: { describedby: [ (f.field_id(:cycle_days, :error) if cycle_days_messages.any?), f.field_id(:cycle_days, :note) ].compact.join(" "),
                       invalid: (true if cycle_days_messages.any?) } %>
         <span><%= t(".cycle_days_unit") %></span>
       </div>
       <% if cycle_days_messages.any? %>
-        <div id="<%= f.field_id(:cycle_days, :error) %>" class="mt-2 text-sm text-red-300">
+        <div id="<%= f.field_id(:cycle_days, :error) %>" class="mt-2 text-sm text-red-700">
           <% cycle_days_messages.each do |message| %>
             <p><%= message %></p>
           <% end %>
         </div>
       <% end %>
-      <p id="<%= f.field_id(:cycle_days, :note) %>" class="mt-2 text-sm text-neutral-400"><%= t(".cycle_days_note") %></p>
+      <p id="<%= f.field_id(:cycle_days, :note) %>" class="mt-2 text-sm text-stone-600"><%= t(".cycle_days_note") %></p>
     </div>
 
     <%# 画面に出していた周期。届いた周期と比べて、周期を変えたかを決める（ItemEditForm） %>
@@ -45,9 +45,9 @@
 
     <div class="grid gap-3">
       <%= f.submit t(".submit"), data: { turbo_submits_with: t(".submitting") },
-            class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300 disabled:cursor-wait disabled:opacity-50" %>
+            class: "w-full cursor-pointer rounded-xl bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 disabled:cursor-wait disabled:opacity-50" %>
       <%= link_to t(".cancel"), item_path(@item),
-            class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
+            class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-black/5" %>
     </div>
   <% end %>
 </div>
