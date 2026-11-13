@@ -1,7 +1,7 @@
 <li>
   <%= link_to item_path(estimate.item), class: "-mx-2 flex gap-3 rounded-lg px-2 py-3 hover:bg-black/5 active:bg-black/10" do %>
     <div class="min-w-0 grow wrap-break-word">
-      <p><%= estimate.item.name %></p>
+      <p class="font-semibold"><%= estimate.item.name %></p>
       <p class="text-sm text-stone-600">
         <% if estimate.last_purchased_on %>
           <%= t(".last_purchased", date: l(estimate.last_purchased_on)) %>

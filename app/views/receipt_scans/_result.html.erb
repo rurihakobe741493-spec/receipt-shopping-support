@@ -5,7 +5,7 @@
 <%# 「ストック」の選択肢。form.items は呼ぶたびに品目を読むので、ここで1回だけ作って各行に渡す %>
 <% item_choices = [ [ t(".new_item"), ReceiptRegistrationForm::Row::NEW_ITEM_ID ] ] + form.items.map { |item| [ item.name, item.id ] } %>
 <div class="px-4 py-10">
-  <h1 class="text-xl"><%= t(".title") %></h1>
+  <h1 class="text-xl font-bold"><%= t(".title") %></h1>
 
   <%# novalidate：iPhone の Safari は、送る前に止めても理由を出さないので、ブラウザでは止めず、サーバーの検証の文で知らせる %>
   <%# warn-same-day：既存のストックに、購入日の欄と同じ日の購入記録がある行に警告を出す（判定に使う品目ごとの購入日を、ここで1回だけ渡す） %>
@@ -14,7 +14,7 @@
         html: { novalidate: true } do |f| %>
     <% if form.errors.any? %>
       <div id="registration_errors" data-turbo-temporary data-controller="scroll-into-view" role="alert" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">
-        <p class="font-medium"><%= t(".error_notice") %></p>
+        <p class="font-semibold"><%= t(".error_notice") %></p>
         <% if form.errors.include?(:base) %>
           <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
             <% form.errors.full_messages_for(:base).each do |message| %>
