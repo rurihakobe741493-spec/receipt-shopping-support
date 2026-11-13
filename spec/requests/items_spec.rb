@@ -133,7 +133,7 @@ RSpec.describe "Items", type: :request do
       get item_path(item)
 
       # 周期は 9/7〜10/1 の24日、次回目安は 10/25、残り -5日
-      expect(response.body).to have_css("div.border-red-800", text: I18n.t("items.status.overdue"))
+      expect(response.body).to have_css("div.border-red-200", text: I18n.t("items.status.overdue"))
       expect(response.body).to include(I18n.t("items.days_left.overdue", count: 5))
       expect(response.body).to include("2026/10/25")
       expect(response.body).to include("2026/10/01")
@@ -144,7 +144,7 @@ RSpec.describe "Items", type: :request do
       item = create_item(user, "洗剤", Date.new(2026, 10, 1))
       get item_path(item)
 
-      expect(response.body).to have_css("div.border-yellow-500", text: I18n.t("items.status.running_low"))
+      expect(response.body).to have_css("div.border-amber-200", text: I18n.t("items.status.running_low"))
       expect(response.body).to include(I18n.t("items.days_left.remaining", count: 1))
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 30) + I18n.t("items.show.cycle_from_setting"))
     end
@@ -155,7 +155,7 @@ RSpec.describe "Items", type: :request do
 
       expect(response.body).not_to include(I18n.t("items.status.overdue"))
       expect(response.body).not_to include(I18n.t("items.status.running_low"))
-      expect(response.body).not_to have_css("div.border-red-800, div.border-yellow-500")
+      expect(response.body).not_to have_css("div.border-red-200, div.border-amber-200")
     end
 
     it "購入記録が0件なら、購入記録なしと一言を出し、購入履歴の一覧を出さない" do

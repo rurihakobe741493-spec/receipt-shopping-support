@@ -6,6 +6,6 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-neutral-700, currentcolor);
+    border-color: var(--color-stone-200, currentcolor);
   }
 }

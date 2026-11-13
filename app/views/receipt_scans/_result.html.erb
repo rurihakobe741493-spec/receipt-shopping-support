@@ -5,7 +5,7 @@
 <%# 「ストック」の選択肢。form.items は呼ぶたびに品目を読むので、ここで1回だけ作って各行に渡す %>
 <% item_choices = [ [ t(".new_item"), ReceiptRegistrationForm::Row::NEW_ITEM_ID ] ] + form.items.map { |item| [ item.name, item.id ] } %>
 <div class="px-4 py-10">
-  <h1 class="text-xl"><%= t(".title") %></h1>
+  <h1 class="text-xl font-bold"><%= t(".title") %></h1>
 
   <%# novalidate：iPhone の Safari は、送る前に止めても理由を出さないので、ブラウザでは止めず、サーバーの検証の文で知らせる %>
   <%# warn-same-day：既存のストックに、購入日の欄と同じ日の購入記録がある行に警告を出す（判定に使う品目ごとの購入日を、ここで1回だけ渡す） %>
@@ -13,8 +13,8 @@
         data: { controller: "prevent-enter-submit warn-same-day", warn_same_day_purchased_dates_value: form.purchased_dates_by_item_id },
         html: { novalidate: true } do |f| %>
     <% if form.errors.any? %>
-      <div id="registration_errors" data-turbo-temporary data-controller="scroll-into-view" role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
-        <p class="font-medium"><%= t(".error_notice") %></p>
+      <div id="registration_errors" data-turbo-temporary data-controller="scroll-into-view" role="alert" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+        <p class="font-semibold"><%= t(".error_notice") %></p>
         <% if form.errors.include?(:base) %>
           <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
             <% form.errors.full_messages_for(:base).each do |message| %>
@@ -26,22 +26,22 @@
     <% end %>
 
     <% if purchased_on_missing %>
-      <p id="purchased_on_missing" class="rounded-xl border border-amber-700 bg-amber-950 px-4 py-3 text-amber-300">
+      <p id="purchased_on_missing" class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
         <%= t(".purchased_on_missing") %>
       </p>
     <% end %>
 
     <div class="grid gap-2">
       <div class="flex items-center gap-3">
-        <%= f.label :purchased_on, class: "shrink-0 text-neutral-300" %>
+        <%= f.label :purchased_on, class: "shrink-0 text-stone-600" %>
         <%= f.date_field :purchased_on,
               min: purchased_on_range.begin, max: purchased_on_range.end, required: true,
-              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-red-400": purchased_on_error),
+              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": !purchased_on_error, "border-red-600": purchased_on_error),
               aria: { describedby: purchased_on_describedby, invalid: (true if purchased_on_error) },
               data: { warn_same_day_target: "purchasedOn", action: "change->warn-same-day#update" } %>
       </div>
       <% if purchased_on_error %>
-        <div id="purchased_on_error" class="text-sm text-red-300">
+        <div id="purchased_on_error" class="text-sm text-red-700">
           <% form.errors.full_messages_for(:purchased_on).each do |message| %>
             <p><%= message %></p>
           <% end %>
@@ -49,7 +49,7 @@
       <% end %>
     </div>
 
-    <p class="text-neutral-300"><%= t(".instruction") %></p>
+    <p class="text-stone-600"><%= t(".instruction") %></p>
 
     <%# 行の一覧と、行を足す部品（add-row）。足した行は、<template> の行を写したもので、一覧の行と同じ部品で描く %>
     <div class="grid gap-3" data-controller="add-row">
@@ -66,16 +66,16 @@
       </template>
       <%# JavaScript が動かないときは足せないので、初めは hidden にし、add-row の connect で出す。type="button"：押しても登録を送らない %>
       <button type="button" hidden data-add-row-target="button" data-action="add-row#add"
-              class="w-full cursor-pointer rounded-xl border border-dashed py-3 hover:bg-neutral-800">
+              class="w-full cursor-pointer rounded-xl border border-dashed border-stone-400 py-3 hover:bg-black/5">
         <span aria-hidden="true">＋ </span><%= t(".add_row") %>
       </button>
     </div>
 
     <div class="grid gap-3">
       <%= f.submit t(".submit"), data: { turbo_submits_with: t(".submitting") },
-            class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300 disabled:cursor-wait disabled:opacity-50" %>
+            class: "w-full cursor-pointer rounded-xl bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 disabled:cursor-wait disabled:opacity-50" %>
       <%= link_to t(".cancel"), root_path,
-            class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-neutral-800" %>
+            class: "block w-full rounded-xl border py-3 text-center text-lg hover:bg-black/5" %>
     </div>
   <% end %>
 </div>

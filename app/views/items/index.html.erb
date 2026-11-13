@@ -1,25 +1,25 @@
 <div class="flex grow flex-col px-4 pt-10">
-  <h1 class="text-xl"><%= t(".title") %></h1>
+  <h1 class="text-xl font-bold"><%= t(".title") %></h1>
 
   <% if @stock_list.empty? %>
-    <p class="mt-4 text-neutral-300"><%= t(".empty") %></p>
+    <p class="mt-4 text-stone-600"><%= t(".empty") %></p>
   <% else %>
     <% if @stock_list.overdue.any? %>
-      <h2 class="mt-6 flex items-center gap-2 text-lg text-red-300">
+      <h2 class="mt-6 flex items-center gap-2 text-lg font-semibold text-red-700">
         <%= render "items/overdue_icon" %>
         <%= t("items.status.overdue") %>
       </h2>
-      <ul class="mt-4 divide-y divide-red-900 rounded-xl border border-red-800 bg-red-950 px-4">
+      <ul class="mt-4 divide-y divide-red-200 rounded-xl border border-red-200 bg-red-50 px-4">
         <%= render partial: "items/row", collection: @stock_list.overdue, as: :estimate %>
       </ul>
     <% end %>
 
     <% if @stock_list.running_low.any? %>
-      <h2 class="mt-6 flex items-center gap-2 text-lg text-yellow-300">
+      <h2 class="mt-6 flex items-center gap-2 text-lg font-semibold text-amber-700">
         <%= render "items/running_low_icon" %>
         <%= t("items.status.running_low") %>
       </h2>
-      <ul class="mt-4 divide-y divide-yellow-400/20 rounded-xl border border-yellow-500 bg-yellow-400/15 px-4">
+      <ul class="mt-4 divide-y divide-amber-200 rounded-xl border border-amber-200 bg-amber-50 px-4">
         <%= render partial: "items/row", collection: @stock_list.running_low, as: :estimate %>
       </ul>
     <% end %>
@@ -27,7 +27,7 @@
     <% if @stock_list.others.any? %>
       <%# 上に枠があるときだけ見出しを出す（枠がないときは、h1 のすぐ下に一覧を置く） %>
       <% if @stock_list.overdue.any? || @stock_list.running_low.any? %>
-        <h2 class="mt-6 text-lg"><%= t(".others_title") %></h2>
+        <h2 class="mt-6 text-lg font-semibold"><%= t(".others_title") %></h2>
       <% end %>
       <ul class="mt-4 divide-y border-t">
         <%= render partial: "items/row", collection: @stock_list.others, as: :estimate %>
@@ -35,19 +35,19 @@
     <% end %>
   <% end %>
 
-  <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 border-t bg-neutral-900 py-4" do |f| %>
+  <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 border-t bg-stone-50 py-4" do |f| %>
     <div class="grid gap-3 group-aria-busy:hidden">
-      <%= f.label :image, t(".scan.label"), class: "text-neutral-300" %>
+      <%= f.label :image, t(".scan.label"), class: "text-stone-600" %>
       <%= f.file_field :image, accept: ReceiptScanForm::ALLOWED_CONTENT_TYPES.join(","), required: true,
-            class: "w-full text-sm text-neutral-300 file:mr-3 file:rounded-xl file:border-0 file:bg-neutral-100 file:px-4 file:py-3 file:text-neutral-900" %>
+            class: "w-full text-sm text-stone-600 file:mr-3 file:rounded-xl file:border-0 file:bg-stone-200 file:px-4 file:py-3 file:text-stone-800" %>
     </div>
     <div class="hidden group-aria-busy:flex flex-col items-center gap-2 py-1 text-center">
-      <span aria-hidden="true" class="size-6 animate-spin rounded-full border-2 border-neutral-600 border-t-neutral-100 motion-reduce:hidden"></span>
+      <span aria-hidden="true" class="size-6 animate-spin rounded-full border-2 border-stone-300 border-t-teal-700 motion-reduce:hidden"></span>
       <p><%= t(".scan.reading") %></p>
-      <p class="text-sm text-neutral-300"><%= t(".scan.wait_note_html") %></p>
+      <p class="text-sm text-stone-600"><%= t(".scan.wait_note_html") %></p>
     </div>
-    <p class="text-sm text-neutral-400"><%= t(".scan.external_notice") %></p>
+    <p class="text-sm text-stone-600"><%= t(".scan.external_notice") %></p>
     <%= f.submit t(".scan.submit"), data: { turbo_submits_with: t(".scan.submitting") },
-          class: "w-full cursor-pointer rounded-xl bg-neutral-100 py-3 text-lg text-neutral-900 hover:bg-neutral-300 disabled:cursor-wait disabled:opacity-50" %>
+          class: "w-full cursor-pointer rounded-xl bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 disabled:cursor-wait disabled:opacity-50" %>
   <% end %>
 </div>

@@ -1,6 +1,6 @@
 <% if resource.errors.any? %>
-  <div id="error_explanation" data-turbo-temporary role="alert" class="rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-red-200">
-    <h2 class="font-medium">
+  <div id="error_explanation" data-turbo-temporary role="alert" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+    <h2 class="font-semibold">
       <%= I18n.t("errors.messages.not_saved",
                  count: resource.errors.count,
                  resource: devise_i18n_fix_model_name_case(resource.model_name.human, i18n_key: "errors.messages.not_saved"))
