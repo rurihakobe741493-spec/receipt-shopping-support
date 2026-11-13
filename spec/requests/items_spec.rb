@@ -42,7 +42,7 @@ RSpec.describe "Items", type: :request do
       get root_path
 
       expect(response.body).to include(I18n.t("items.row.last_purchased", date: "2026/10/01"))
-      expect(response.body).to include(I18n.t("items.days_left.remaining", count: 1))
+      expect(response.body).to have_text(I18n.t("items.days_left.remaining_html", number: 1))
       expect(response.body).to include(I18n.t("items.row.next_purchase", date: "2026/10/31"))
       expect(response.body).to have_css("li a[href='#{item_path(item)}']")
     end
@@ -134,7 +134,7 @@ RSpec.describe "Items", type: :request do
 
       # 周期は 9/7〜10/1 の24日、次回目安は 10/25、残り -5日
       expect(response.body).to have_css("div.border-red-200", text: I18n.t("items.status.overdue"))
-      expect(response.body).to include(I18n.t("items.days_left.overdue", count: 5))
+      expect(response.body).to have_text(I18n.t("items.days_left.overdue_html", number: 5))
       expect(response.body).to include("2026/10/25")
       expect(response.body).to include("2026/10/01")
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 24) + I18n.t("items.show.cycle_from_purchases"))
@@ -145,7 +145,7 @@ RSpec.describe "Items", type: :request do
       get item_path(item)
 
       expect(response.body).to have_css("div.border-amber-200", text: I18n.t("items.status.running_low"))
-      expect(response.body).to include(I18n.t("items.days_left.remaining", count: 1))
+      expect(response.body).to have_text(I18n.t("items.days_left.remaining_html", number: 1))
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 30) + I18n.t("items.show.cycle_from_setting"))
     end
 

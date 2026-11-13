@@ -119,9 +119,11 @@ ja:
       running_low: "そろそろ切れそう"
       no_purchases: "購入記録なし"
     days_left:
-      remaining: "あと%{count}日"
-      today: "今日が目安"
-      overdue: "%{count}日過ぎています"
+      remaining_html: "あと%{number}日"
+      today_html: "%{number}が目安"
+      today_number: "今日"
+      overdue_html: "目安を%{number}日過ぎています"
+      overdue_short_html: "%{number}日過ぎ"
   purchases:
     purchase:
       destroy_label: "%{date} の「%{receipt_name}」を削除"

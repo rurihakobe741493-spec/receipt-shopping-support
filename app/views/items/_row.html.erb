@@ -12,7 +12,7 @@
     </div>
     <% if estimate.last_purchased_on %>
       <div class="shrink-0 text-right">
-        <p><%= days_left_text(estimate.days_left) %></p>
+        <p><%= days_left_tag(estimate.days_left, form: :short) %></p>
         <p class="text-sm text-stone-600"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
       </div>
     <% end %>
