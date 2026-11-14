@@ -8,9 +8,9 @@ RSpec.describe "Items", type: :request do
     item
   end
 
-  # 一覧の見出し（h2）と行の品目名を、画面の上から順に並べる（見出しの中の改行と空白は1つにまとめる）
-  def headings_and_names
-    Capybara.string(response.body).all("h2, li a > div:first-child > p:first-child").map { |node| node.text(normalize_ws: true) }
+  # 一覧のカードごとに、カードの中の文（p）を上から順に並べる（改行と空白は1つにまとめる）
+  def cards
+    Capybara.string(response.body).all("li").map { |card| card.all("p").map { |node| node.text(normalize_ws: true) } }
   end
 
   describe "GET /（ストック一覧）" do
@@ -34,54 +34,47 @@ RSpec.describe "Items", type: :request do
       create_item(create(:user), "ほかの人の品目")
       get root_path
 
-      expect(headings_and_names).to eq([ "洗剤" ])
+      expect(cards.map(&:first)).to eq([ "洗剤" ])
     end
 
-    it "購入記録のある行に、最終購入日・残り日数・次回目安を出し、詳細へのリンクにする" do
+    it "購入記録のあるカードに、残り日数・進み具合のバー・次回目安を出し、詳細へのリンクにする" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 1))
       get root_path
 
-      expect(response.body).to include(I18n.t("items.row.last_purchased", date: "2026/10/01"))
       expect(response.body).to have_text(I18n.t("items.days_left.remaining_html", number: 1))
+      # 周期30日のうち29日過ぎた（96.66…%）
+      expect(response.body).to have_css("li div[style='width: 97%']")
       expect(response.body).to include(I18n.t("items.row.next_purchase", date: "2026/10/31"))
       expect(response.body).to have_css("li a[href='#{item_path(item)}']")
     end
 
-    it "購入記録のない行には、購入記録なしと出し、残り日数を出さない" do
+    it "購入記録のないカードには、購入記録なしのバッジだけを出し、残り日数・バー・次回目安を出さない" do
       create_item(user, "洗剤")
       get root_path
 
-      expect(response.body).to include(I18n.t("items.status.no_purchases"))
-      # 右側（残り日数と次回目安）のかたまりがなく、品目名のかたまりだけ
-      expect(response.body).to have_css("li a > div", count: 1)
+      expect(cards).to eq([ [ "洗剤", I18n.t("items.status.no_purchases") ] ])
+      expect(response.body).not_to have_css("li div[style]")
     end
 
-    it "目安を過ぎた品目・切れそうな品目・そのほかを、それぞれの見出しの下に出す" do
+    it "目安を過ぎた品目・切れそうな品目・そのほかを、残り日数の少ない順のカードにし、状態のバッジを付ける" do
       create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
       create_item(user, "洗剤", Date.new(2026, 10, 7))         # 残り7日
       create_item(user, "電池", Date.new(2026, 9, 20))         # 残り-10日
       get root_path
 
-      expect(headings_and_names).to eq([
-        I18n.t("items.status.overdue"), "電池",
-        I18n.t("items.status.running_low"), "洗剤",
-        I18n.t("items.index.others_title"), "歯ブラシ"
+      expect(cards).to eq([
+        [ "電池", I18n.t("items.status.overdue"), I18n.t("items.days_left.overdue_short_html", number: 10), I18n.t("items.row.next_purchase", date: "2026/10/20") ],
+        [ "洗剤", I18n.t("items.status.running_low"), I18n.t("items.days_left.remaining_html", number: 7), I18n.t("items.row.next_purchase", date: "2026/11/06") ],
+        [ "歯ブラシ", I18n.t("items.days_left.remaining_html", number: 20), I18n.t("items.row.next_purchase", date: "2026/11/19") ]
       ])
     end
 
-    it "枠に入る品目がなければ、見出しを出さずに一覧だけを出す" do
-      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))
-      create_item(user, "まな板")
-      get root_path
-
-      expect(headings_and_names).to eq([ "歯ブラシ", "まな板" ])
-    end
-
-    it "もう切れているかもの枠だけなら、そのほかの見出しを出さない" do
+    it "状態の見出し（h2）と枠を出さない" do
       create_item(user, "電池", Date.new(2026, 9, 20))
+      create_item(user, "洗剤", Date.new(2026, 10, 7))
       get root_path
 
-      expect(headings_and_names).to eq([ I18n.t("items.status.overdue"), "電池" ])
+      expect(response.body).not_to have_css("h2")
     end
 
     it "レシートを読み取るフォームを出す" do

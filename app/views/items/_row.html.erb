@@ -1,24 +1,25 @@
 <li>
-  <%= link_to item_path(estimate.item), class: "-mx-2 flex gap-3 rounded-lg px-2 py-3 hover:bg-black/5 active:bg-black/10" do %>
-    <div class="min-w-0 grow wrap-break-word">
-      <p class="font-semibold"><%= estimate.item.name %></p>
-      <p class="text-sm text-stone-600">
-        <% if estimate.last_purchased_on %>
-          <%= t(".last_purchased", date: l(estimate.last_purchased_on)) %>
-        <% else %>
-          <%= t("items.status.no_purchases") %>
-        <% end %>
-      </p>
+  <%# 品目ごとのカード。カード全体をストック詳細へのリンクにする %>
+  <%# 乗せたとき・押したときの色は、ほかの行と同じ black/5・black/10 %>
+  <%= link_to item_path(estimate.item), class: "block rounded-xl border bg-white px-4 py-3 hover:bg-black/5 active:bg-black/10" do %>
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex min-w-0 flex-col items-start gap-1 wrap-break-word">
+        <p class="font-semibold"><%= estimate.item.name %></p>
+        <%= render "items/status_badge", estimate: %>
+      </div>
+      <%# そろそろ切れそうの数字は yellow-500。白の上で 1.9：1 で、文字の目安 4.5：1 に届かないが、見本と実際の画面で見比べて、 %>
+      <%# 明るい黄のほうが赤との違いがひと目で分かり、見栄えもよかったため。読み上げとバッジの文字で状態は伝わる %>
+      <% if estimate.last_purchased_on %>
+        <p class="<%= class_names("shrink-0 text-right", "text-red-700": estimate.overdue?, "text-yellow-500": estimate.running_low?) %>">
+          <%= days_left_tag(estimate.days_left, form: :short) %>
+        </p>
+      <% end %>
     </div>
     <% if estimate.last_purchased_on %>
-      <div class="shrink-0 text-right">
-        <p><%= days_left_tag(estimate.days_left, form: :short) %></p>
-        <p class="text-sm text-stone-600"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
+      <div class="mt-3">
+        <%= render "items/progress_bar", estimate: %>
       </div>
+      <p class="mt-2 text-sm text-stone-600"><%= t(".next_purchase", date: l(estimate.next_purchase_on)) %></p>
     <% end %>
-    <%# アイコン：Heroicons（MIT、Tailwind Labs）の chevron-right。押すとストック詳細が開くことを示す %>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="size-5 shrink-0 self-center text-stone-500">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
-    </svg>
   <% end %>
 </li>
