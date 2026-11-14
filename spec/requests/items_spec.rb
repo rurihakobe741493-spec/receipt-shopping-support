@@ -8,9 +8,18 @@ RSpec.describe "Items", type: :request do
     item
   end
 
-  # 一覧の見出し（h2）と行の品目名を、画面の上から順に並べる（見出しの中の改行と空白は1つにまとめる）
-  def headings_and_names
-    Capybara.string(response.body).all("h2, li a > div:first-child > p:first-child").map { |node| node.text(normalize_ws: true) }
+  # 一覧のカードごとに、カードの中の文（p）を上から順に並べる（改行と空白は1つにまとめる）
+  def cards
+    Capybara.string(response.body).all("li").map { |card| card.all("p").map { |node| node.text(normalize_ws: true) } }
+  end
+
+  # 見出しのすぐ下の件数の行を、「ラベル 件数」の形で上から順に並べる
+  def status_rows
+    Capybara.string(response.body).all("h1 + dl > div").map { |row| row.text(normalize_ws: true) }
+  end
+
+  def status_row(label_key, count)
+    "#{I18n.t("items.index.status.#{label_key}")} #{I18n.t("items.index.status.count_html", number: count)}"
   end
 
   describe "GET /（ストック一覧）" do
@@ -22,10 +31,12 @@ RSpec.describe "Items", type: :request do
 
     before { sign_in user }
 
-    it "品目が0件なら、案内の文を出し、一覧（ul）を出さない" do
+    it "品目が0件なら、撮影のボタンの名前を入れた案内を出し、件数の行と一覧（ul）を出さない" do
       get root_path
 
-      expect(response.body).to include(I18n.t("items.index.empty"))
+      expect(response.body).to include(I18n.t("items.index.empty_title"))
+      expect(response.body).to include(I18n.t("items.index.empty_body", button: I18n.t("items.index.scan.label")))
+      expect(response.body).not_to have_css("dl")
       expect(response.body).not_to have_css("ul")
     end
 
@@ -34,61 +45,79 @@ RSpec.describe "Items", type: :request do
       create_item(create(:user), "ほかの人の品目")
       get root_path
 
-      expect(headings_and_names).to eq([ "洗剤" ])
+      expect(cards.map(&:first)).to eq([ "洗剤" ])
     end
 
-    it "購入記録のある行に、最終購入日・残り日数・次回目安を出し、詳細へのリンクにする" do
+    it "購入記録のあるカードに、残り日数・進み具合のバー・次回目安を出し、詳細へのリンクにする" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 1))
       get root_path
 
-      expect(response.body).to include(I18n.t("items.row.last_purchased", date: "2026/10/01"))
-      expect(response.body).to include(I18n.t("items.days_left.remaining", count: 1))
+      expect(response.body).to have_text(I18n.t("items.days_left.remaining_html", number: 1))
+      # 周期30日のうち29日過ぎた（96.66…%）
+      expect(response.body).to have_css("li div[style='width: 97%']")
       expect(response.body).to include(I18n.t("items.row.next_purchase", date: "2026/10/31"))
       expect(response.body).to have_css("li a[href='#{item_path(item)}']")
     end
 
-    it "購入記録のない行には、購入記録なしと出し、残り日数を出さない" do
+    it "購入記録のないカードには、購入記録なしのバッジだけを出し、残り日数・バー・次回目安を出さない" do
       create_item(user, "洗剤")
       get root_path
 
-      expect(response.body).to include(I18n.t("items.status.no_purchases"))
-      # 右側（残り日数と次回目安）のかたまりがなく、品目名のかたまりだけ
-      expect(response.body).to have_css("li a > div", count: 1)
+      expect(cards).to eq([ [ "洗剤", I18n.t("items.status.no_purchases") ] ])
+      expect(response.body).not_to have_css("li div[style]")
     end
 
-    it "目安を過ぎた品目・切れそうな品目・そのほかを、それぞれの見出しの下に出す" do
+    it "目安を過ぎた品目・切れそうな品目・そのほかを、残り日数の少ない順のカードにし、状態のバッジを付ける" do
       create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
       create_item(user, "洗剤", Date.new(2026, 10, 7))         # 残り7日
       create_item(user, "電池", Date.new(2026, 9, 20))         # 残り-10日
       get root_path
 
-      expect(headings_and_names).to eq([
-        I18n.t("items.status.overdue"), "電池",
-        I18n.t("items.status.running_low"), "洗剤",
-        I18n.t("items.index.others_title"), "歯ブラシ"
+      expect(cards).to eq([
+        [ "電池", I18n.t("items.status.overdue"), I18n.t("items.days_left.overdue_short_html", number: 10), I18n.t("items.row.next_purchase", date: "2026/10/20") ],
+        [ "洗剤", I18n.t("items.status.running_low"), I18n.t("items.days_left.remaining_html", number: 7), I18n.t("items.row.next_purchase", date: "2026/11/06") ],
+        [ "歯ブラシ", I18n.t("items.days_left.remaining_html", number: 20), I18n.t("items.row.next_purchase", date: "2026/11/19") ]
       ])
     end
 
-    it "枠に入る品目がなければ、見出しを出さずに一覧だけを出す" do
-      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))
+    it "見出しのすぐ下に、目安を過ぎたもの・もうすぐ目安のものの件数を2行で出し、1件以上の数字に色を付ける" do
+      create_item(user, "電池", Date.new(2026, 9, 20))         # 残り-10日
+      create_item(user, "洗剤", Date.new(2026, 10, 7))         # 残り7日
+      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
+      get root_path
+
+      expect(status_rows).to eq([ status_row(:overdue_label, 1), status_row(:running_low_label, 1) ])
+      expect(response.body).to have_css("h1 + dl span.text-red-700", exact_text: "1")
+      expect(response.body).to have_css("h1 + dl span.text-yellow-500", exact_text: "1")
+    end
+
+    it "目安を過ぎたもの・もうすぐ目安のものがなければ、0件の2行を出し、数字に色を付けない" do
+      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
       create_item(user, "まな板")
       get root_path
 
-      expect(headings_and_names).to eq([ "歯ブラシ", "まな板" ])
+      expect(status_rows).to eq([ status_row(:overdue_label, 0), status_row(:running_low_label, 0) ])
+      expect(response.body).not_to have_css("h1 + dl span.text-red-700, h1 + dl span.text-yellow-500")
     end
 
-    it "もう切れているかもの枠だけなら、そのほかの見出しを出さない" do
+    it "状態の見出し（h2）と枠を出さない" do
       create_item(user, "電池", Date.new(2026, 9, 20))
+      create_item(user, "洗剤", Date.new(2026, 10, 7))
       get root_path
 
-      expect(headings_and_names).to eq([ I18n.t("items.status.overdue"), "電池" ])
+      expect(response.body).not_to have_css("h2")
     end
 
-    it "レシートを読み取るフォームを出す" do
+    it "レシートを読み取るフォームを出し、写真を選ぶ欄を撮影のボタン（label）の中に置く" do
       get root_path
 
       expect(response.body).to have_css("form[action='#{receipt_scans_path}'][method='post'][enctype='multipart/form-data']")
-      expect(response.body).to have_css("input[type='file'][name='image'][accept='image/jpeg,image/png,image/webp'][required]")
+      # 欄は消さずに label で包む。capture は付けない（スマホで写真ライブラリからも選べるように）
+      expect(response.body).to have_css("label[for='image'] input#image[type='file'][name='image'][accept='image/jpeg,image/png,image/webp'][required]")
+      expect(response.body).not_to have_css("input[type='file'][capture]")
+      expect(response.body).to have_css("label[for='image']", text: I18n.t("items.index.scan.label"))
+      expect(response.body).to include(I18n.t("items.index.scan.reselect"))
+      expect(response.body).to include(I18n.t("items.index.scan.selected"))
       expect(response.body).to have_css("input[type='submit'][value='#{I18n.t("items.index.scan.submit")}'][data-turbo-submits-with='#{I18n.t("items.index.scan.submitting")}']")
       expect(response.body).to include(I18n.t("items.index.scan.external_notice"))
       expect(response.body).to include(I18n.t("items.index.scan.reading"))
@@ -127,40 +156,44 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status(404)
     end
 
-    it "購入日が2日分あれば、購入履歴から計算した周期で、要約を出す（目安を過ぎたら赤い箱）" do
+    it "購入日が2日分あれば、購入履歴から計算した周期で要約を出し、目安を過ぎたら赤のバッジと赤い数字にする" do
       item = create_item(user, "洗剤", Date.new(2026, 9, 7))
       create(:purchase, item:, purchased_on: Date.new(2026, 10, 1))
       get item_path(item)
 
       # 周期は 9/7〜10/1 の24日、次回目安は 10/25、残り -5日
-      expect(response.body).to have_css("div.border-red-200", text: I18n.t("items.status.overdue"))
-      expect(response.body).to include(I18n.t("items.days_left.overdue", count: 5))
+      expect(response.body).to have_text(I18n.t("items.status.overdue"))
+      expect(response.body).to have_css("p.text-red-700", text: I18n.t("items.days_left.overdue_html", number: 5))
+      expect(response.body).to have_css("div[style='width: 100%']")
       expect(response.body).to include("2026/10/25")
       expect(response.body).to include("2026/10/01")
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 24) + I18n.t("items.show.cycle_from_purchases"))
     end
 
-    it "購入日が1日分なら、設定値の周期で計算し、残り日数が7日以内なら黄色い箱にする" do
+    it "購入日が1日分なら、設定値の周期で計算し、残り日数が7日以内なら黄のバッジと黄の数字にする" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 1))
       get item_path(item)
 
-      expect(response.body).to have_css("div.border-amber-200", text: I18n.t("items.status.running_low"))
-      expect(response.body).to include(I18n.t("items.days_left.remaining", count: 1))
+      expect(response.body).to have_text(I18n.t("items.status.running_low"))
+      expect(response.body).to have_css("p.text-yellow-500", text: I18n.t("items.days_left.remaining_html", number: 1))
+      # 周期30日のうち29日過ぎた（96.66…%）
+      expect(response.body).to have_css("div[style='width: 97%']")
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 30) + I18n.t("items.show.cycle_from_setting"))
     end
 
-    it "残り日数が8日以上なら、状態の言葉を出さず、箱に色を付けない" do
+    it "残り日数が8日以上なら、状態のバッジを出さず、数字に色を付けない" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 25))
       get item_path(item)
 
       expect(response.body).not_to include(I18n.t("items.status.overdue"))
       expect(response.body).not_to include(I18n.t("items.status.running_low"))
-      expect(response.body).not_to have_css("div.border-red-200, div.border-amber-200")
+      expect(response.body).not_to have_css("p.text-red-700, p.text-yellow-500")
     end
 
-    it "購入記録が0件なら、購入記録なしと一言を出し、購入履歴の一覧を出さない" do
+    it "購入記録が0件なら、購入記録なしのバッジと一言を出し、進み具合のバーと購入履歴の一覧を出さない" do
       item = create_item(user, "洗剤")
       get item_path(item)
+      expect(response.body).not_to have_css("div[style]")
 
       expect(response.body).to include(I18n.t("items.status.no_purchases"))
       expect(response.body).to have_css("h2", text: I18n.t("items.show.purchases_title"))

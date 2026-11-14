@@ -13,34 +13,23 @@
     <%= link_to t(".edit"), edit_item_path(@item), class: "shrink-0 rounded-lg border px-3 py-1 text-sm hover:bg-black/5" %>
   </div>
 
-  <%# 要約の箱。トップの枠と同じ判定で、もう切れているかも（赤）・そろそろ切れそう（黄色）の色にする %>
-  <div class="<%= class_names("mt-4 rounded-xl border px-4 py-3",
-                    "border-red-200 bg-red-50": @estimate.overdue?,
-                    "border-amber-200 bg-amber-50": @estimate.running_low?) %>">
-    <% if @estimate.overdue? %>
-      <p class="mb-2 flex items-center gap-2 text-red-700">
-        <%= render "items/overdue_icon" %>
-        <%= t("items.status.overdue") %>
+  <%# 要約の箱。トップのカードと同じ部品（状態のバッジ・残り日数・進み具合のバー）を使い、白いカードにする %>
+  <div class="mt-4 rounded-xl border bg-white px-4 py-3">
+    <%= render "items/status_badge", estimate: @estimate %>
+    <% if @estimate.last_purchased_on %>
+      <%# 残り日数は長い文で、数字だけ大きく出す。色はトップのカードと同じ（そろそろ切れそうは yellow-500。理由は items/_row のコメント） %>
+      <p class="<%= class_names("mt-2 first:mt-0", "text-red-700": @estimate.overdue?, "text-yellow-500": @estimate.running_low?) %>">
+        <%= days_left_tag(@estimate.days_left, form: :long) %>
       </p>
-    <% elsif @estimate.running_low? %>
-      <p class="mb-2 flex items-center gap-2 text-amber-700">
-        <%= render "items/running_low_icon" %>
-        <%= t("items.status.running_low") %>
-      </p>
+      <div class="mt-2">
+        <%= render "items/progress_bar", estimate: @estimate %>
+      </div>
     <% end %>
-
-    <%# 購入記録が0件の品目（最後の1件を消したときなど）は、次回購入目安と最終購入日の代わりに「購入記録なし」を出す %>
-    <% if @estimate.last_purchased_on.nil? %>
-      <p class="mb-2 text-stone-600"><%= t("items.status.no_purchases") %></p>
-    <% end %>
-    <dl class="grid gap-2">
+    <dl class="mt-3 grid gap-2 border-t pt-3">
       <% if @estimate.last_purchased_on %>
         <div class="flex justify-between gap-3">
           <dt class="text-stone-600"><%= t(".next_purchase") %></dt>
-          <dd class="text-right">
-            <%= days_left_text(@estimate.days_left) %>
-            <span class="block text-sm text-stone-600"><%= l(@estimate.next_purchase_on) %></span>
-          </dd>
+          <dd class="text-right"><%= l(@estimate.next_purchase_on) %></dd>
         </div>
         <div class="flex justify-between gap-3">
           <dt class="text-stone-600"><%= t(".last_purchased") %></dt>

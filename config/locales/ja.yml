@@ -77,10 +77,16 @@ ja:
   items:
     index:
       title: "ストック一覧"
-      others_title: "そのほかのストック"
-      empty: "まだストックがありません。レシートを撮ると、買ったものをストックとして登録できます。下の「レシートを撮る」から始めてください。"
+      empty_title: "まだストックがありません"
+      empty_body: "下の「%{button}」からレシートを読み取ると、買ったものがストックになります。"
+      status:
+        overdue_label: "購入目安を過ぎたもの"
+        running_low_label: "もうすぐ購入目安"
+        count_html: "%{number} 件"
       scan:
-        label: "レシートを撮る"
+        label: "レシートを撮る・選ぶ"
+        reselect: "撮り直す・選び直す"
+        selected: "写真を選びました"
         reading: "レシートを読み取っています"
         wait_note_html: "10秒ほどかかることがあります。<br>そのままお待ちください。"
         external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"
@@ -112,16 +118,17 @@ ja:
     destroy:
       success: "「%{name}」を削除しました。"
     row:
-      last_purchased: "最終購入 %{date}"
       next_purchase: "次回目安 %{date}"
     status:
       overdue: "もう切れているかも"
       running_low: "そろそろ切れそう"
       no_purchases: "購入記録なし"
     days_left:
-      remaining: "あと%{count}日"
-      today: "今日が目安"
-      overdue: "%{count}日過ぎています"
+      remaining_html: "あと%{number}日"
+      today_html: "%{number}が目安"
+      today_number: "今日"
+      overdue_html: "目安を%{number}日過ぎています"
+      overdue_short_html: "%{number}日過ぎ"
   purchases:
     purchase:
       destroy_label: "%{date} の「%{receipt_name}」を削除"

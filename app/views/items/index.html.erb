@@ -2,52 +2,55 @@
   <h1 class="text-xl font-bold"><%= t(".title") %></h1>
 
   <% if @stock_list.empty? %>
-    <p class="mt-4 text-stone-600"><%= t(".empty") %></p>
+    <%# 品目が0件のときの案内。下の撮影のボタンの名前を、ボタンと同じ訳から入れる %>
+    <div class="mt-4 rounded-xl border border-dashed border-stone-300 bg-white px-4 py-6 text-center">
+      <p class="font-semibold"><%= t(".empty_title") %></p>
+      <p class="mt-1 text-sm text-stone-600"><%= t(".empty_body", button: t(".scan.label")) %></p>
+    </div>
   <% else %>
-    <% if @stock_list.overdue.any? %>
-      <h2 class="mt-6 flex items-center gap-2 text-lg font-semibold text-red-700">
-        <%= render "items/overdue_icon" %>
-        <%= t("items.status.overdue") %>
-      </h2>
-      <ul class="mt-4 divide-y divide-red-200 rounded-xl border border-red-200 bg-red-50 px-4">
-        <%= render partial: "items/row", collection: @stock_list.overdue, as: :estimate %>
-      </ul>
-    <% end %>
-
-    <% if @stock_list.running_low.any? %>
-      <h2 class="mt-6 flex items-center gap-2 text-lg font-semibold text-amber-700">
-        <%= render "items/running_low_icon" %>
-        <%= t("items.status.running_low") %>
-      </h2>
-      <ul class="mt-4 divide-y divide-amber-200 rounded-xl border border-amber-200 bg-amber-50 px-4">
-        <%= render partial: "items/row", collection: @stock_list.running_low, as: :estimate %>
-      </ul>
-    <% end %>
-
-    <% if @stock_list.others.any? %>
-      <%# 上に枠があるときだけ見出しを出す（枠がないときは、h1 のすぐ下に一覧を置く） %>
-      <% if @stock_list.overdue.any? || @stock_list.running_low.any? %>
-        <h2 class="mt-6 text-lg font-semibold"><%= t(".others_title") %></h2>
-      <% end %>
-      <ul class="mt-4 divide-y border-t">
-        <%= render partial: "items/row", collection: @stock_list.others, as: :estimate %>
-      </ul>
-    <% end %>
+    <%# 見出しの下の件数。目安を過ぎたもの・もうすぐ目安のものを、0件でもいつも2行で出す %>
+    <%# 数字の色は1件以上のときだけ付ける（赤は red-700、黄はカードの数字と同じ yellow-500） %>
+    <% overdue_count = @stock_list.overdue.size %>
+    <% running_low_count = @stock_list.running_low.size %>
+    <dl class="mt-1 text-stone-600">
+      <div class="flex gap-2">
+        <dt><%= t(".status.overdue_label") %></dt>
+        <dd><%= t(".status.count_html", number: tag.span(overdue_count, class: class_names("font-bold", "text-red-700": overdue_count.positive?))) %></dd>
+      </div>
+      <div class="flex gap-2">
+        <dt><%= t(".status.running_low_label") %></dt>
+        <dd><%= t(".status.count_html", number: tag.span(running_low_count, class: class_names("font-bold", "text-yellow-500": running_low_count.positive?))) %></dd>
+      </div>
+    </dl>
+    <%# 品目ごとのカードを、残り日数の少ない順（StockList の順）に1つの一覧で並べる。状態はカードの中のバッジで出す %>
+    <ul class="mt-4 grid gap-3">
+      <%= render partial: "items/row", collection: @stock_list.all, as: :estimate %>
+    </ul>
   <% end %>
 
+  <%# 撮影のフォーム。写真を選ぶ欄は消さずに sr-only で隠し、label で包んで、ボタン1つの見た目にする %>
+  <%# capture は付けない（付けると、スマホで写真ライブラリから選べなくなる） %>
+  <%# 写真を選ぶと required の欄（#image）が :valid になる。選ぶ前（:invalid）のあいだだけ、選んだ印・知らせ・「読み取る」を隠す %>
+  <%# ボタンの見た目と文字は、選んだあと（:valid）に替える。:has() が効かないブラウザでは、選ぶ前の見た目のまま全部が出るだけで、送れる %>
+  <%# JavaScript は使わない %>
+  <%# 欄は id で指す（「読み取る」の input type="submit" も、いつも :valid になるため） %>
   <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 border-t bg-stone-50 py-4" do |f| %>
-    <div class="grid gap-3 group-aria-busy:hidden">
-      <%= f.label :image, t(".scan.label"), class: "text-stone-600" %>
-      <%= f.file_field :image, accept: ReceiptScanForm::ALLOWED_CONTENT_TYPES.join(","), required: true,
-            class: "w-full text-sm text-stone-600 file:mr-3 file:rounded-xl file:border-0 file:bg-stone-200 file:px-4 file:py-3 file:text-stone-800" %>
-    </div>
     <div class="hidden group-aria-busy:flex flex-col items-center gap-2 py-1 text-center">
       <span aria-hidden="true" class="size-6 animate-spin rounded-full border-2 border-stone-300 border-t-teal-700 motion-reduce:hidden"></span>
       <p><%= t(".scan.reading") %></p>
       <p class="text-sm text-stone-600"><%= t(".scan.wait_note_html") %></p>
     </div>
-    <p class="text-sm text-stone-600"><%= t(".scan.external_notice") %></p>
+    <p class="text-sm text-stone-600 group-has-[#image:invalid]:hidden"><%= t(".scan.external_notice") %></p>
+    <%# 選んだ印は「読み取る」のすぐ上に、ボタンと同じ teal の太字で出す（知らせの文と見分けやすくする） %>
+    <p class="font-bold text-teal-700 group-aria-busy:hidden group-has-[#image:invalid]:hidden"><%= t(".scan.selected") %></p>
     <%= f.submit t(".scan.submit"), data: { turbo_submits_with: t(".scan.submitting") },
-          class: "w-full cursor-pointer rounded-xl bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 disabled:cursor-wait disabled:opacity-50" %>
+          class: "w-full cursor-pointer rounded-xl bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 disabled:cursor-wait disabled:opacity-50 group-has-[#image:invalid]:hidden" %>
+    <%# 選ぶ前は塗りのボタン、選んだあとは枠だけのボタン（「読み取る」を主にする）。欄にフォーカスがあるときは、ボタンに枠を出す %>
+    <%= f.label :image, class: "flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-teal-700 bg-teal-700 py-3 text-lg text-white hover:bg-teal-800 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-teal-700 group-aria-busy:hidden group-has-[#image:valid]:bg-white group-has-[#image:valid]:text-teal-700 group-has-[#image:valid]:hover:bg-teal-50" do %>
+      <%= render "items/camera_icon" %>
+      <span class="group-has-[#image:valid]:hidden"><%= t(".scan.label") %></span>
+      <span class="hidden group-has-[#image:valid]:inline"><%= t(".scan.reselect") %></span>
+      <%= f.file_field :image, accept: ReceiptScanForm::ALLOWED_CONTENT_TYPES.join(","), required: true, class: "sr-only" %>
+    <% end %>
   <% end %>
 </div>

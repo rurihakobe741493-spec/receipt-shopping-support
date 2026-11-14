@@ -53,6 +53,10 @@ RSpec.describe StockList do
       expect(names(stock_list.others)).to eq([ "ゴミ袋", "スポンジ", "歯ブラシ", "まな板" ])
     end
 
+    it "すべての品目を、残り日数の少ない順、同じなら品目名の順、購入記録なしは最後に all に入れる" do
+      expect(names(stock_list.all)).to eq([ "電池", "牛乳", "ティッシュ", "シャンプー", "洗剤", "ゴミ袋", "スポンジ", "歯ブラシ", "まな板" ])
+    end
+
     it "品目があれば、empty? は false を返す" do
       expect(stock_list.empty?).to be(false)
     end
