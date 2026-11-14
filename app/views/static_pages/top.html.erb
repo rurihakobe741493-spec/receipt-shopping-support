@@ -1,13 +1,8 @@
 <div class="px-4 py-10">
-  <h1 class="text-2xl font-bold leading-relaxed">
-    レシートを撮るだけ。<br>
-    あとは考えなくていい。
-  </h1>
-  <p class="mt-4 text-sm leading-relaxed text-stone-600">
-    買い物の段取りやストック管理が苦手な人のための買い物サポートアプリ
-  </p>
+  <h1 class="text-2xl font-bold leading-relaxed"><%= t(".catch_html") %></h1>
+  <p class="mt-4 text-sm leading-relaxed text-stone-600"><%= t(".lead") %></p>
 
-  <%= link_to "使ってみる", new_user_registration_path, class: "mt-8 block w-full rounded-xl bg-teal-700 py-3 text-center text-lg text-white hover:bg-teal-800" %>
+  <%= link_to t(".start"), new_user_registration_path, class: "mt-8 block w-full rounded-xl bg-teal-700 py-3 text-center text-lg text-white hover:bg-teal-800" %>
 
   <hr class="my-8">
 

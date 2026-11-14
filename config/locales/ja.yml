@@ -65,6 +65,11 @@ ja:
       sign_out: "ログアウト"
       sign_in: "ログイン"
       sign_up: "新規登録"
+  static_pages:
+    top:
+      catch_html: "レシートを撮るだけ。<br>あとは考えなくていい。"
+      lead: "買い物の段取りやストック管理が苦手な人のための買い物サポートアプリ"
+      start: "使ってみる"
   devise:
     registrations:
       edit:
