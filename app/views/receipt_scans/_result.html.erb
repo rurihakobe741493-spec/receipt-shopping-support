@@ -36,7 +36,7 @@
         <%= f.label :purchased_on, class: "shrink-0 text-stone-600" %>
         <%= f.date_field :purchased_on,
               min: purchased_on_range.begin, max: purchased_on_range.end, required: true,
-              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": !purchased_on_error, "border-red-600": purchased_on_error),
+              class: class_names("min-w-0 grow rounded-xl border bg-white px-4 py-3", "border-stone-500": !purchased_on_error, "border-red-600": purchased_on_error),
               aria: { describedby: purchased_on_describedby, invalid: (true if purchased_on_error) },
               data: { warn_same_day_target: "purchasedOn", action: "change->warn-same-day#update" } %>
       </div>

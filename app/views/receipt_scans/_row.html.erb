@@ -5,15 +5,15 @@
 <%# 品目名・周期のエラーは欄の下に出すので、行の下にはそれ以外のエラーを出す %>
 <% row_messages = row.errors.reject { |error| error.attribute.in?([ :name, :cycle_days ]) }.map(&:full_message) %>
 <%# 行はカード。チェックした行だけ、薄い teal の地と濃い枠にする（has- は自分の中を見る。group-has- は group の中の要素にだけ効き、<li> そのものには効かない） %>
-<%# エラーのある行は、チェックしているときの地と枠を赤にする（行のエラーの文と同じく、チェックを外した行では出さない） %>
+<%# エラーのある行は、チェックしているときの地と枠を赤にする（行のエラーの文と同じく、チェックを外した行では出さない）。チェックの印も赤にする %>
 <li class="<%= class_names("group grid grid-cols-1 gap-3 rounded-xl border bg-white p-4", "has-[input:checked]:border-teal-600 has-[input:checked]:bg-teal-50": row.errors.none?, "has-[input:checked]:border-red-600 has-[input:checked]:bg-red-50": row.errors.any?) %>">
   <div class="flex items-center gap-3">
     <%= row_form.check_box :selected,
-          class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
+          class: class_names("size-5 shrink-0 cursor-pointer", "accent-teal-700": row.errors.none?, "accent-red-700": row.errors.any?), aria: { label: t(".row_checkbox_label") } %>
     <%# placeholder：欄が空のとき（足した行など）に、何を入れる欄かを薄い文字で出す（読み上げ用の aria-label と同じ言葉） %>
     <%= row_form.text_field :receipt_name,
           placeholder: Purchase.human_attribute_name(:receipt_name),
-          class: class_names("min-w-0 grow rounded-xl border px-4 py-3 placeholder:text-stone-500", "border-stone-500": !row.errors.include?(:receipt_name), "border-red-600": row.errors.include?(:receipt_name)),
+          class: class_names("min-w-0 grow rounded-xl border bg-white px-4 py-3 placeholder:text-stone-500", "border-stone-500": !row.errors.include?(:receipt_name), "border-red-600": row.errors.include?(:receipt_name)),
           aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
           data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
   </div>
@@ -22,7 +22,7 @@
   <div class="flex items-center gap-3 pl-8 group-has-[input[type=checkbox]:not(:checked)]:hidden">
     <%= row_form.label :item_id, class: "w-16 shrink-0 text-stone-600" %>
     <%= row_form.select :item_id, item_choices, { prompt: t(".select_prompt") },
-          class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": !row.errors.include?(:item_id), "border-red-600": row.errors.include?(:item_id)),
+          class: class_names("min-w-0 grow rounded-xl border bg-white px-4 py-3", "border-stone-500": !row.errors.include?(:item_id), "border-red-600": row.errors.include?(:item_id)),
           aria: { invalid: (true if row.errors.include?(:item_id)) },
           data: { action: "change->warn-same-day#update" } %>
   </div>
@@ -36,7 +36,7 @@
       <div class="flex items-center gap-3">
         <%= row_form.label :name, class: "w-16 shrink-0 text-stone-600" %>
         <%= row_form.text_field :name,
-              class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": name_messages.none?, "border-red-600": name_messages.any?),
+              class: class_names("min-w-0 grow rounded-xl border bg-white px-4 py-3", "border-stone-500": name_messages.none?, "border-red-600": name_messages.any?),
               aria: { describedby: (row_form.field_id(:name, :error) if name_messages.any?), invalid: (true if name_messages.any?) },
               data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
       </div>
@@ -53,7 +53,7 @@
         <%= row_form.label :cycle_days, class: "w-16 shrink-0 text-stone-600" %>
         <%= row_form.number_field :cycle_days,
               min: 1, max: Item::MAX_CYCLE_DAYS, step: 1, required: true, inputmode: "numeric",
-              class: class_names("w-24 rounded-xl border px-4 py-3", "border-stone-500": cycle_days_messages.none?, "border-red-600": cycle_days_messages.any?),
+              class: class_names("w-24 rounded-xl border bg-white px-4 py-3", "border-stone-500": cycle_days_messages.none?, "border-red-600": cycle_days_messages.any?),
               aria: { describedby: (row_form.field_id(:cycle_days, :error) if cycle_days_messages.any?), invalid: (true if cycle_days_messages.any?) },
               data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
         <span><%= t(".cycle_days_unit") %></span>
