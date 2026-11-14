@@ -15,7 +15,9 @@
           aria: { label: Purchase.human_attribute_name(:receipt_name), invalid: (true if row.errors.include?(:receipt_name)) },
           data: { action: "keydown.enter->prevent-enter-submit#prevent" } %>
   </div>
-  <div class="hidden items-center gap-3 pl-8 group-has-[input:checked]:flex">
+  <%# 出し分けは隠す側に書く（チェックを外した行・「新規として登録」でない行で隠す）。:has() が効かないブラウザでは、全部の欄が出るだけで登録できる %>
+  <%# チェックは input[type=checkbox] で絞る（:not(:checked) は、行の中の text の欄や、check_box が足す hidden の欄にも当たるため） %>
+  <div class="flex items-center gap-3 pl-8 group-has-[input[type=checkbox]:not(:checked)]:hidden">
     <%= row_form.label :item_id, class: "w-16 shrink-0 text-stone-600" %>
     <%= row_form.select :item_id, item_choices, { prompt: t(".select_prompt") },
           class: class_names("min-w-0 grow rounded-xl border px-4 py-3", "border-stone-500": !row.errors.include?(:item_id), "border-red-600": row.errors.include?(:item_id)),
@@ -24,10 +26,10 @@
   </div>
   <%# 同じ日の警告。初めは hidden で、warn-same-day が出し入れする（JavaScript が動かないときは出ない）。チェックを外した行では CSS で隠す %>
   <%# pl-27：文の始まりを「ストック」の選択欄にそろえる（行の字下げ pl-8 ＋ ラベル w-16 ＋ 間 gap-3） %>
-  <p hidden data-warn-same-day-target="warning" class="hidden pl-27 text-sm text-amber-700 group-has-[input:checked]:block"><%= t(".same_day_warning") %></p>
+  <p hidden data-warn-same-day-target="warning" class="pl-27 text-sm text-amber-700 group-has-[input[type=checkbox]:not(:checked)]:hidden"><%= t(".same_day_warning") %></p>
   <%# 品目名と周期は、チェックを入れ、「新規として登録」を選んだ行でだけ出す（CSS だけで出し分ける。value=new は Row::NEW_ITEM_ID と同じ値） %>
   <%# grid-cols-1：列の最小の幅を0にして、狭い画面で中身が枠の右へはみ出さないようにする %>
-  <div class="hidden grid-cols-1 gap-3 pl-8 group-has-[input:checked]:group-has-[option[value=new]:checked]:grid">
+  <div class="grid grid-cols-1 gap-3 pl-8 group-has-[input[type=checkbox]:not(:checked)]:hidden group-has-[option[value=new]:not(:checked)]:hidden">
     <div class="grid grid-cols-1 gap-1">
       <div class="flex items-center gap-3">
         <%= row_form.label :name, class: "w-16 shrink-0 text-stone-600" %>
@@ -68,7 +70,7 @@
   </div>
   <p class="pl-8 text-sm text-stone-600 group-has-[input:checked]:hidden"><%= t(".unchecked_note") %></p>
   <% if row_messages.any? %>
-    <div class="hidden pl-8 text-sm text-red-700 group-has-[input:checked]:block">
+    <div class="pl-8 text-sm text-red-700 group-has-[input[type=checkbox]:not(:checked)]:hidden">
       <% row_messages.each do |message| %>
         <p><%= message %></p>
       <% end %>
