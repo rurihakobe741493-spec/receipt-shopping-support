@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* 読み取り中のレシートの上を、線が上から下へなぞる動き（items/_scanning_receipt） */
+@theme {
+  --animate-scan: scan 1.8s ease-in-out infinite;
+
+  @keyframes scan {
+    from {
+      translate: 0 -100%;
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+}
+
 @layer base {
   *,
   ::after,
