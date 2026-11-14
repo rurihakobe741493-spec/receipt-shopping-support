@@ -156,40 +156,44 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status(404)
     end
 
-    it "購入日が2日分あれば、購入履歴から計算した周期で、要約を出す（目安を過ぎたら赤い箱）" do
+    it "購入日が2日分あれば、購入履歴から計算した周期で要約を出し、目安を過ぎたら赤のバッジと赤い数字にする" do
       item = create_item(user, "洗剤", Date.new(2026, 9, 7))
       create(:purchase, item:, purchased_on: Date.new(2026, 10, 1))
       get item_path(item)
 
       # 周期は 9/7〜10/1 の24日、次回目安は 10/25、残り -5日
-      expect(response.body).to have_css("div.border-red-200", text: I18n.t("items.status.overdue"))
-      expect(response.body).to have_text(I18n.t("items.days_left.overdue_html", number: 5))
+      expect(response.body).to have_text(I18n.t("items.status.overdue"))
+      expect(response.body).to have_css("p.text-red-700", text: I18n.t("items.days_left.overdue_html", number: 5))
+      expect(response.body).to have_css("div[style='width: 100%']")
       expect(response.body).to include("2026/10/25")
       expect(response.body).to include("2026/10/01")
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 24) + I18n.t("items.show.cycle_from_purchases"))
     end
 
-    it "購入日が1日分なら、設定値の周期で計算し、残り日数が7日以内なら黄色い箱にする" do
+    it "購入日が1日分なら、設定値の周期で計算し、残り日数が7日以内なら黄のバッジと黄の数字にする" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 1))
       get item_path(item)
 
-      expect(response.body).to have_css("div.border-amber-200", text: I18n.t("items.status.running_low"))
-      expect(response.body).to have_text(I18n.t("items.days_left.remaining_html", number: 1))
+      expect(response.body).to have_text(I18n.t("items.status.running_low"))
+      expect(response.body).to have_css("p.text-yellow-500", text: I18n.t("items.days_left.remaining_html", number: 1))
+      # 周期30日のうち29日過ぎた（96.66…%）
+      expect(response.body).to have_css("div[style='width: 97%']")
       expect(response.body).to have_css("dd", text: I18n.t("items.show.cycle_days_value", count: 30) + I18n.t("items.show.cycle_from_setting"))
     end
 
-    it "残り日数が8日以上なら、状態の言葉を出さず、箱に色を付けない" do
+    it "残り日数が8日以上なら、状態のバッジを出さず、数字に色を付けない" do
       item = create_item(user, "洗剤", Date.new(2026, 10, 25))
       get item_path(item)
 
       expect(response.body).not_to include(I18n.t("items.status.overdue"))
       expect(response.body).not_to include(I18n.t("items.status.running_low"))
-      expect(response.body).not_to have_css("div.border-red-200, div.border-amber-200")
+      expect(response.body).not_to have_css("p.text-red-700, p.text-yellow-500")
     end
 
-    it "購入記録が0件なら、購入記録なしと一言を出し、購入履歴の一覧を出さない" do
+    it "購入記録が0件なら、購入記録なしのバッジと一言を出し、進み具合のバーと購入履歴の一覧を出さない" do
       item = create_item(user, "洗剤")
       get item_path(item)
+      expect(response.body).not_to have_css("div[style]")
 
       expect(response.body).to include(I18n.t("items.status.no_purchases"))
       expect(response.body).to have_css("h2", text: I18n.t("items.show.purchases_title"))
