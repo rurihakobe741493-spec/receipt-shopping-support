@@ -4,7 +4,9 @@
 <% cycle_days_messages = row.errors.full_messages_for(:cycle_days) %>
 <%# 品目名・周期のエラーは欄の下に出すので、行の下にはそれ以外のエラーを出す %>
 <% row_messages = row.errors.reject { |error| error.attribute.in?([ :name, :cycle_days ]) }.map(&:full_message) %>
-<li class="group grid grid-cols-1 gap-3 rounded-xl border p-4">
+<%# 行はカード。チェックした行だけ、薄い teal の地と濃い枠にする（has- は自分の中を見る。group-has- は group の中の要素にだけ効き、<li> そのものには効かない） %>
+<%# エラーのある行は、チェックしているときの地と枠を赤にする（行のエラーの文と同じく、チェックを外した行では出さない） %>
+<li class="<%= class_names("group grid grid-cols-1 gap-3 rounded-xl border bg-white p-4", "has-[input:checked]:border-teal-600 has-[input:checked]:bg-teal-50": row.errors.none?, "has-[input:checked]:border-red-600 has-[input:checked]:bg-red-50": row.errors.any?) %>">
   <div class="flex items-center gap-3">
     <%= row_form.check_box :selected,
           class: "size-5 shrink-0 cursor-pointer", aria: { label: t(".row_checkbox_label") } %>
