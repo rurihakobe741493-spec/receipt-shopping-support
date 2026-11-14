@@ -35,10 +35,13 @@
   <%# JavaScript は使わない %>
   <%# 欄は id で指す（「読み取る」の input type="submit" も、いつも :valid になるため） %>
   <%= form_with url: receipt_scans_path, class: "group sticky bottom-0 mt-auto grid gap-3 border-t bg-stone-50 py-4" do |f| %>
-    <div class="hidden group-aria-busy:flex flex-col items-center gap-2 py-1 text-center">
-      <span aria-hidden="true" class="size-6 animate-spin rounded-full border-2 border-stone-300 border-t-teal-700 motion-reduce:hidden"></span>
-      <p><%= t(".scan.reading") %></p>
-      <p class="text-sm text-stone-600"><%= t(".scan.wait_note_html") %></p>
+    <%# 読み取り中の表示。左にレシートの絵、右に文を横に並べる（帯を低くして、上の一覧をなるべく見せる） %>
+    <div class="hidden group-aria-busy:flex items-center gap-3 py-1">
+      <%= render "items/scanning_receipt" %>
+      <div>
+        <p><%= t(".scan.reading") %></p>
+        <p class="text-sm text-stone-600"><%= t(".scan.wait_note_html") %></p>
+      </div>
     </div>
     <p class="text-sm text-stone-600 group-has-[#image:invalid]:hidden"><%= t(".scan.external_notice") %></p>
     <%# 選んだ印は「読み取る」のすぐ上に、ボタンと同じ teal の太字で出す（知らせの文と見分けやすくする） %>
