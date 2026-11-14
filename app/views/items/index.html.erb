@@ -2,8 +2,26 @@
   <h1 class="text-xl font-bold"><%= t(".title") %></h1>
 
   <% if @stock_list.empty? %>
-    <p class="mt-4 text-stone-600"><%= t(".empty") %></p>
+    <%# 品目が0件のときの案内。下の撮影のボタンの名前を、ボタンと同じ訳から入れる %>
+    <div class="mt-4 rounded-xl border border-dashed border-stone-300 bg-white px-4 py-6 text-center">
+      <p class="font-semibold"><%= t(".empty_title") %></p>
+      <p class="mt-1 text-sm text-stone-600"><%= t(".empty_body", button: t(".scan.label")) %></p>
+    </div>
   <% else %>
+    <%# 見出しの下の件数。目安を過ぎたもの・もうすぐ目安のものを、0件でもいつも2行で出す %>
+    <%# 数字の色は1件以上のときだけ付ける（赤は red-700、黄はカードの数字と同じ yellow-500） %>
+    <% overdue_count = @stock_list.overdue.size %>
+    <% running_low_count = @stock_list.running_low.size %>
+    <dl class="mt-1 text-stone-600">
+      <div class="flex gap-2">
+        <dt><%= t(".status.overdue_label") %></dt>
+        <dd><%= t(".status.count_html", number: tag.span(overdue_count, class: class_names("font-bold", "text-red-700": overdue_count.positive?))) %></dd>
+      </div>
+      <div class="flex gap-2">
+        <dt><%= t(".status.running_low_label") %></dt>
+        <dd><%= t(".status.count_html", number: tag.span(running_low_count, class: class_names("font-bold", "text-yellow-500": running_low_count.positive?))) %></dd>
+      </div>
+    </dl>
     <%# 品目ごとのカードを、残り日数の少ない順（StockList の順）に1つの一覧で並べる。状態はカードの中のバッジで出す %>
     <ul class="mt-4 grid gap-3">
       <%= render partial: "items/row", collection: @stock_list.all, as: :estimate %>

@@ -13,6 +13,15 @@ RSpec.describe "Items", type: :request do
     Capybara.string(response.body).all("li").map { |card| card.all("p").map { |node| node.text(normalize_ws: true) } }
   end
 
+  # 見出しのすぐ下の件数の行を、「ラベル 件数」の形で上から順に並べる
+  def status_rows
+    Capybara.string(response.body).all("h1 + dl > div").map { |row| row.text(normalize_ws: true) }
+  end
+
+  def status_row(label_key, count)
+    "#{I18n.t("items.index.status.#{label_key}")} #{I18n.t("items.index.status.count_html", number: count)}"
+  end
+
   describe "GET /（ストック一覧）" do
     around do |example|
       travel_to(Date.new(2026, 10, 30)) { example.run }
@@ -22,10 +31,12 @@ RSpec.describe "Items", type: :request do
 
     before { sign_in user }
 
-    it "品目が0件なら、案内の文を出し、一覧（ul）を出さない" do
+    it "品目が0件なら、撮影のボタンの名前を入れた案内を出し、件数の行と一覧（ul）を出さない" do
       get root_path
 
-      expect(response.body).to include(I18n.t("items.index.empty"))
+      expect(response.body).to include(I18n.t("items.index.empty_title"))
+      expect(response.body).to include(I18n.t("items.index.empty_body", button: I18n.t("items.index.scan.label")))
+      expect(response.body).not_to have_css("dl")
       expect(response.body).not_to have_css("ul")
     end
 
@@ -67,6 +78,26 @@ RSpec.describe "Items", type: :request do
         [ "洗剤", I18n.t("items.status.running_low"), I18n.t("items.days_left.remaining_html", number: 7), I18n.t("items.row.next_purchase", date: "2026/11/06") ],
         [ "歯ブラシ", I18n.t("items.days_left.remaining_html", number: 20), I18n.t("items.row.next_purchase", date: "2026/11/19") ]
       ])
+    end
+
+    it "見出しのすぐ下に、目安を過ぎたもの・もうすぐ目安のものの件数を2行で出し、1件以上の数字に色を付ける" do
+      create_item(user, "電池", Date.new(2026, 9, 20))         # 残り-10日
+      create_item(user, "洗剤", Date.new(2026, 10, 7))         # 残り7日
+      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
+      get root_path
+
+      expect(status_rows).to eq([ status_row(:overdue_label, 1), status_row(:running_low_label, 1) ])
+      expect(response.body).to have_css("h1 + dl span.text-red-700", exact_text: "1")
+      expect(response.body).to have_css("h1 + dl span.text-yellow-500", exact_text: "1")
+    end
+
+    it "目安を過ぎたもの・もうすぐ目安のものがなければ、0件の2行を出し、数字に色を付けない" do
+      create_item(user, "歯ブラシ", Date.new(2026, 10, 20))    # 残り20日
+      create_item(user, "まな板")
+      get root_path
+
+      expect(status_rows).to eq([ status_row(:overdue_label, 0), status_row(:running_low_label, 0) ])
+      expect(response.body).not_to have_css("h1 + dl span.text-red-700, h1 + dl span.text-yellow-500")
     end
 
     it "状態の見出し（h2）と枠を出さない" do
