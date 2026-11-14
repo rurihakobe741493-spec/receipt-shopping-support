@@ -84,7 +84,9 @@ ja:
         running_low_label: "もうすぐ購入目安"
         count_html: "%{number} 件"
       scan:
-        label: "レシートを撮る"
+        label: "レシートを撮る・選ぶ"
+        reselect: "撮り直す・選び直す"
+        selected: "写真を選びました"
         reading: "レシートを読み取っています"
         wait_note_html: "10秒ほどかかることがあります。<br>そのままお待ちください。"
         external_notice: "撮った画像は、文字を読み取るために Google のサービス（Cloud Vision API）へ送ります。画像は保存しません。"

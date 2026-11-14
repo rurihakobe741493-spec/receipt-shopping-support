@@ -108,11 +108,16 @@ RSpec.describe "Items", type: :request do
       expect(response.body).not_to have_css("h2")
     end
 
-    it "レシートを読み取るフォームを出す" do
+    it "レシートを読み取るフォームを出し、写真を選ぶ欄を撮影のボタン（label）の中に置く" do
       get root_path
 
       expect(response.body).to have_css("form[action='#{receipt_scans_path}'][method='post'][enctype='multipart/form-data']")
-      expect(response.body).to have_css("input[type='file'][name='image'][accept='image/jpeg,image/png,image/webp'][required]")
+      # 欄は消さずに label で包む。capture は付けない（スマホで写真ライブラリからも選べるように）
+      expect(response.body).to have_css("label[for='image'] input#image[type='file'][name='image'][accept='image/jpeg,image/png,image/webp'][required]")
+      expect(response.body).not_to have_css("input[type='file'][capture]")
+      expect(response.body).to have_css("label[for='image']", text: I18n.t("items.index.scan.label"))
+      expect(response.body).to include(I18n.t("items.index.scan.reselect"))
+      expect(response.body).to include(I18n.t("items.index.scan.selected"))
       expect(response.body).to have_css("input[type='submit'][value='#{I18n.t("items.index.scan.submit")}'][data-turbo-submits-with='#{I18n.t("items.index.scan.submitting")}']")
       expect(response.body).to include(I18n.t("items.index.scan.external_notice"))
       expect(response.body).to include(I18n.t("items.index.scan.reading"))
