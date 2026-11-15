@@ -1,0 +1,10 @@
+<%# 周期の中の進み具合のバー（トップのカードとストック詳細）。購入記録がある品目だけで描く %>
+<%# 同じことを残り日数の文で伝えているので、読み上げから外す。長さは品目ごとに違うので、style で決める %>
+<%# 黄（yellow-400）だけは地の線との差が 3：1 に届かないが、文字と同じことを伝える飾りなので、明るい黄色を選んだ %>
+<div aria-hidden="true" class="h-1.5 overflow-hidden rounded-full bg-stone-200">
+  <div class="<%= class_names("h-full rounded-full",
+                    "bg-red-600": estimate.overdue?,
+                    "bg-yellow-400": estimate.running_low?,
+                    "bg-teal-700": !estimate.overdue? && !estimate.running_low?) %>"
+       style="width: <%= estimate.elapsed_percent %>%"></div>
+</div>

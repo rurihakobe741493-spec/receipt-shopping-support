@@ -56,6 +56,14 @@ class ConsumptionEstimate
     !days_left.nil? && days_left.between?(0, RUNNING_LOW_DAYS)
   end
 
+  # 周期のうち、最終購入日から過ぎた割合（0〜100の整数）。トップと詳細のバーの長さに使う
+  # 目安の日（残り0日）で100、目安を過ぎても100のまま。購入記録がない品目は nil
+  def elapsed_percent
+    return nil if days_left.nil?
+
+    ((cycle_days - days_left) * 100.0 / cycle_days).round.clamp(0, 100)
+  end
+
   private
 
   # 周期を変えていれば、変えた日（当日を含む）以降の購入日だけを使う

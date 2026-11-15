@@ -1,0 +1,14 @@
+<%# 読み取り中のレシートの絵。白い紙に灰の行4本を描き、その上を teal の線が上から下へなぞる（飾りなので aria-hidden） %>
+<%# 線は紙と同じ大きさの箱の下の端に置き、箱ごと -100%（紙の上の端）から 0（下の端）へ動かす（animate-scan は application.tailwind.css の @theme） %>
+<%# 動きを減らす設定のときは動きを止め、箱を -50% に置いて、線を紙の真ん中で止める %>
+<div aria-hidden="true" class="relative h-12 w-9 shrink-0 overflow-hidden rounded-t-sm border border-stone-300 bg-white">
+  <div class="grid gap-2 px-1.5 pt-2">
+    <div class="h-0.5 rounded-full bg-stone-200"></div>
+    <div class="h-0.5 rounded-full bg-stone-200"></div>
+    <div class="h-0.5 rounded-full bg-stone-200"></div>
+    <div class="h-0.5 w-1/2 rounded-full bg-stone-200"></div>
+  </div>
+  <div class="absolute inset-0 -translate-y-1/2 animate-scan motion-reduce:animate-none">
+    <div class="absolute inset-x-0 bottom-0 h-0.5 bg-teal-600"></div>
+  </div>
+</div>

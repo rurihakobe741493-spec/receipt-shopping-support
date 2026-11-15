@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" class="scroll-pt-16 scheme-dark">
+<html lang="ja" class="scroll-pt-16">
   <head>
     <title><%= content_for(:title) || app_name %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,8 +23,8 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="bg-neutral-950 text-neutral-100">
-    <div class="mx-auto flex min-h-dvh max-w-md flex-col bg-neutral-900">
+  <body class="bg-stone-200 text-stone-800">
+    <div class="mx-auto flex min-h-dvh max-w-md flex-col bg-stone-50">
       <%= render "shared/header" %>
       <%= render "shared/flash" %>
       <%# id="main" は、receipt_scans/create.turbo_stream.erb が中身を差し替える目印。flex flex-col は、ページの中身を縦に伸ばし、items/index のフォームを画面の下に寄せるため %>

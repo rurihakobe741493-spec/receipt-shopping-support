@@ -2,12 +2,12 @@
 <li class="flex items-center gap-3 py-3">
   <div class="min-w-0 grow">
     <p><%= date %></p>
-    <p class="text-sm text-neutral-400 wrap-break-word"><%= purchase.receipt_name %></p>
+    <p class="text-sm text-stone-600 wrap-break-word"><%= purchase.receipt_name %></p>
   </div>
   <%# 確認の窓（Turbo の data-turbo-confirm）で OK を押したときだけ送る。JavaScript が動かないときは、確認なしで消える %>
   <%= button_to item_purchase_path(purchase.item_id, purchase), method: :delete,
         form: { class: "shrink-0", data: { turbo_confirm: t(".confirm", date:, receipt_name: purchase.receipt_name) } },
-        class: "-mr-3 cursor-pointer rounded-lg p-3 text-neutral-400 hover:bg-white/5 hover:text-red-300 disabled:cursor-wait disabled:opacity-50",
+        class: "-mr-3 cursor-pointer rounded-lg p-3 text-stone-500 hover:bg-black/5 hover:text-red-700 disabled:cursor-wait disabled:opacity-50",
         aria: { label: t(".destroy_label", date:, receipt_name: purchase.receipt_name) } do %>
     <%# アイコン：Heroicons（MIT、Tailwind Labs）の trash %>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="size-5">

@@ -12,6 +12,11 @@ class StockList
     @estimates.empty?
   end
 
+  # 並べた順のすべて（トップでは、この順のまま1つの一覧に並べる）
+  def all
+    @estimates
+  end
+
   # 下の3つは、どれも並べた順のまま（select・reject は順を変えない）
   # ビューが何度か呼ぶので、1回目の結果を覚えておく
   def overdue

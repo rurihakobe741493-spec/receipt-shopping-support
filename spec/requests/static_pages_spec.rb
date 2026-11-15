@@ -12,6 +12,11 @@ RSpec.describe "StaticPages", type: :request do
     it "アプリケーションヘルパーのアプリ名が表示される" do
       expect(response.body).to include(ApplicationController.helpers.app_name)
     end
+
+    it "使い方の3段と、新規登録への「使ってみる」が表示される" do
+      expect(response.body).to have_css("ol > li", count: 3)
+      expect(response.body).to have_link("使ってみる", href: new_user_registration_path)
+    end
   end
 
   describe "GET /（ログインしている）" do

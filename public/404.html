@@ -10,18 +10,14 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <style>
       /* 静的なページなので、アプリの CSS（Tailwind）は読み込めない。色と大きさは Tailwind の値を写した。アプリの色を変えたら、ここと 500.html も直す */
-      :root {
-        color-scheme: dark;
-      }
-
       *, *::before, *::after {
         box-sizing: border-box;
         margin: 0;
       }
 
       body {
-        background: oklch(14.5% 0 0); /* neutral-950 */
-        color: oklch(97% 0 0); /* neutral-100 */
+        background: oklch(92.3% 0.003 48.717); /* stone-200 */
+        color: oklch(26.8% 0.007 34.298); /* stone-800 */
         font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         line-height: 1.5;
       }
@@ -32,24 +28,36 @@
         min-height: 100dvh;
         max-width: 28rem; /* max-w-md */
         margin: 0 auto;
-        background: oklch(20.5% 0 0); /* neutral-900 */
+        background: oklch(98.5% 0.001 106.423); /* stone-50 */
       }
 
       header {
-        border-bottom: 1px solid oklch(37.1% 0 0); /* neutral-700 */
-        background: oklch(14.5% 0 0); /* neutral-950 */
+        border-bottom: 1px solid oklch(92.3% 0.003 48.717); /* stone-200 */
+        background: #fff; /* white */
         padding: 0.75rem 1rem;
       }
 
       header a {
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem; /* gap-1.5 */
         color: inherit;
         font-size: 1.125rem; /* text-lg */
         font-weight: 700;
         text-decoration: none;
+      }
+
+      header svg {
+        flex-shrink: 0;
+        width: 1.5rem; /* size-6 */
+        height: 1.5rem;
+        color: oklch(60% 0.118 184.704); /* teal-600 */
+      }
+
+      header span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       main {
@@ -64,7 +72,7 @@
       }
 
       .status {
-        color: oklch(55.6% 0 0); /* neutral-500 */
+        color: oklch(55.3% 0.013 58.071); /* stone-500 */
         font-size: 2.25rem; /* text-4xl */
         font-weight: 700;
       }
@@ -75,13 +83,13 @@
       }
 
       p {
-        color: oklch(70.8% 0 0); /* neutral-400 */
+        color: oklch(44.4% 0.011 73.639); /* stone-600 */
         font-size: 0.875rem; /* text-sm */
       }
 
       .button {
         margin-top: 1rem;
-        border: 1px solid oklch(43.9% 0 0); /* neutral-600 */
+        border: 1px solid oklch(92.3% 0.003 48.717); /* stone-200 */
         border-radius: 0.375rem;
         padding: 0.5rem 1rem;
         color: inherit;
@@ -94,7 +102,13 @@
   <body>
     <div class="page">
       <header>
-        <a href="/">レシパシャ</a>
+        <a href="/">
+          <!-- アイコン：Heroicons（MIT、Tailwind Labs）の shopping-bag。ロゴの印 -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+          </svg>
+          <span>レシパシャ</span>
+        </a>
       </header>
       <main>
         <div class="status">404</div>

@@ -185,4 +185,35 @@ RSpec.describe ConsumptionEstimate do
       expect(estimate("2026-10-08").running_low?).to be(false)
     end
   end
+
+  describe "#elapsed_percent" do
+    around do |example|
+      travel_to(Date.new(2026, 10, 30)) { example.run }
+    end
+
+    it "購入記録が0件なら、nil を返す" do
+      expect(estimate.elapsed_percent).to be_nil
+    end
+
+    it "今日買ったなら、0 を返す" do
+      expect(estimate("2026-10-30").elapsed_percent).to eq(0)
+    end
+
+    it "周期30日のうち9日過ぎたなら、30 を返す" do
+      expect(estimate("2026-10-21").elapsed_percent).to eq(30)
+    end
+
+    it "割り切れないときは、四捨五入した整数を返す" do
+      # 周期30日のうち2日で 6.66…%
+      expect(estimate("2026-10-28").elapsed_percent).to eq(7)
+    end
+
+    it "残り日数が0なら、100 を返す" do
+      expect(estimate("2026-09-30").elapsed_percent).to eq(100)
+    end
+
+    it "目安を過ぎても、100 を超えない" do
+      expect(estimate("2026-09-29").elapsed_percent).to eq(100)
+    end
+  end
 end
