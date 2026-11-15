@@ -65,6 +65,7 @@ ja:
       sign_out: "ログアウト"
       sign_in: "ログイン"
       sign_up: "新規登録"
+      guest: "ゲスト"
     flash:
       close: "知らせを閉じる"
   static_pages:
@@ -179,3 +180,6 @@ ja:
     create:
       success: "%{count}件の購入記録を登録しました。"
       success_with_new_items: "新しいストックを%{new_items_count}件作り、%{count}件の購入記録を登録しました。"
+  users:
+    registrations:
+      guest_not_allowed: "ゲストではアカウント設定を使えません。続けて使うには、ログアウトしてから新規登録してください。"
