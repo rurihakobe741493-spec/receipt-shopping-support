@@ -69,6 +69,17 @@ ja:
     top:
       catch_html: "レシートを撮るだけ。<br>あとは考えなくていい。"
       lead: "買い物の段取りやストック管理が苦手な人のための買い物サポートアプリ"
+      how_to: "使い方"
+      steps:
+        scan:
+          title: "レシートを撮る"
+          body: "買ったらレシートを撮るだけ"
+        confirm:
+          title: "読み取りを確かめる"
+          body: "品目と購入日を確かめて登録"
+        estimate:
+          title: "ストックが切れそうなものが分かる"
+          body: "消費ペースから目安の日を見積もる"
       start: "使ってみる"
   devise:
     registrations:
