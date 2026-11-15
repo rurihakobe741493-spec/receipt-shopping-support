@@ -65,6 +65,8 @@ ja:
       sign_out: "ログアウト"
       sign_in: "ログイン"
       sign_up: "新規登録"
+    flash:
+      close: "知らせを閉じる"
   static_pages:
     top:
       catch_html: "レシートを撮るだけ。<br>あとは考えなくていい。"
