@@ -1,4 +1,5 @@
-<div id="flash">
+<%# data-turbo-temporary：Turbo が画面を写して取っておく前（turbo:before-cache）に知らせを消す。ブラウザの「戻る」で、前の知らせがまた出ないようにする %>
+<div id="flash" data-turbo-temporary>
   <% flash.each do |type, message| %>
     <% if type == "notice" %>
       <p class="mx-4 mt-4 rounded border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800" role="status"><%= message %></p>
