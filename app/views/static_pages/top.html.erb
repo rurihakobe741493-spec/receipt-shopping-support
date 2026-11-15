@@ -1,19 +1,25 @@
 <div class="px-4 py-10">
-  <h1 class="text-2xl font-bold leading-relaxed">
-    レシートを撮るだけ。<br>
-    あとは考えなくていい。
-  </h1>
-  <p class="mt-4 text-sm leading-relaxed text-stone-600">
-    買い物の段取りやストック管理が苦手な人のための買い物サポートアプリ
-  </p>
+  <h1 class="text-2xl font-bold leading-relaxed"><%= t(".catch_html") %></h1>
+  <p class="mt-4 text-sm leading-relaxed text-stone-600"><%= t(".lead") %></p>
 
-  <%= link_to "使ってみる", new_user_registration_path, class: "mt-8 block w-full rounded-xl bg-teal-700 py-3 text-center text-lg text-white hover:bg-teal-800" %>
+  <h2 class="mt-8 font-semibold"><%= t(".how_to") %></h2>
+  <%# 使い方の3段。アイコンは size-6 で描く（camera・clipboard_check はもとから size-6）。丸と丸の間を縦の線でつなぐ（最後の段には線を付けない） %>
+  <ol class="mt-3 grid gap-5 rounded-xl border bg-white p-4">
+    <% { scan: "items/camera_icon", confirm: "static_pages/clipboard_check_icon", estimate: "items/running_low_icon" }.each_with_index do |(step, icon), index| %>
+      <li class="relative flex gap-3">
+        <% if index < 2 %>
+          <span aria-hidden="true" class="absolute top-12 -bottom-4 left-5 w-0.5 -translate-x-1/2 rounded-full bg-teal-200"></span>
+        <% end %>
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+          <%= render icon, size: "size-6" %>
+        </span>
+        <div class="pt-2">
+          <p class="font-semibold"><%= index + 1 %>. <%= t(".steps.#{step}.title") %></p>
+          <p class="mt-0.5 text-sm text-stone-600"><%= t(".steps.#{step}.body") %></p>
+        </div>
+      </li>
+    <% end %>
+  </ol>
 
-  <hr class="my-8">
-
-  <ul class="list-disc space-y-3 pl-5">
-    <li>買ったらレシートを撮るだけ</li>
-    <li>消費ペースを自動で見積もる</li>
-    <li>切れそうなものがひと目で分かる</li>
-  </ul>
+  <%= link_to t(".start"), new_user_registration_path, class: "mt-8 block w-full rounded-xl bg-teal-700 py-3 text-center text-lg text-white hover:bg-teal-800" %>
 </div>
