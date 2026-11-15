@@ -2,9 +2,15 @@
 <div id="flash" data-turbo-temporary>
   <% flash.each do |type, message| %>
     <% if type == "notice" %>
-      <p class="mx-4 mt-4 rounded border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800" role="status"><%= message %></p>
+      <div class="mx-4 mt-4 flex items-start gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800" role="status">
+        <%= render "shared/check_circle_icon", color: "text-green-700" %>
+        <p><%= message %></p>
+      </div>
     <% elsif type == "alert" %>
-      <p class="mx-4 mt-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800" role="alert"><%= message %></p>
+      <div class="mx-4 mt-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+        <%= render "shared/exclamation_circle_icon", color: "text-red-700" %>
+        <p><%= message %></p>
+      </div>
     <% end %>
   <% end %>
 </div>
