@@ -77,6 +77,11 @@ RSpec.configure do |config|
   # have_css・have_field などで、request spec の応答の HTML を調べられるようにする
   config.include Capybara::RSpecMatchers, type: :request
 
+  # rate_limit の回数を、テストごとに数え直す（キャッシュはテストの間で共有されるため）
+  config.before do
+    Rails.cache.clear
+  end
+
   # 本物の Cloud Vision API を呼ばないようにする（呼ぶと、その場でテストが落ちる）
   # 読み取りの結果が要るテストでは、ReceiptOcrService.call を差し替える
   config.before do
