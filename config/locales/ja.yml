@@ -68,6 +68,9 @@ ja:
       guest: "ゲスト"
     flash:
       close: "知らせを閉じる"
+    guest_sign_in:
+      button: "ゲストで試す"
+      note: "登録なしで試せます。データは24時間で消えます"
   static_pages:
     top:
       catch_html: "レシートを撮るだけ。<br>あとは考えなくていい。"
@@ -85,6 +88,12 @@ ja:
           body: "消費ペースから目安の日を見積もる"
       start: "使ってみる"
   devise:
+    sessions:
+      new:
+        title: "ログイン"
+        submit: "ログインする"
+        sign_up: "新規登録はこちら"
+        or: "または"
     registrations:
       edit:
         title: "アカウント設定"
@@ -183,5 +192,9 @@ ja:
       success: "%{count}件の購入記録を登録しました。"
       success_with_new_items: "新しいストックを%{new_items_count}件作り、%{count}件の購入記録を登録しました。"
   users:
+    sessions:
+      guest_sign_in:
+        signed_in: "ゲストとしてログインしました。データは24時間で消えます。"
+        too_many: "ゲストを作る回数が上限に達しました。時間をおいて試してください。"
     registrations:
       guest_not_allowed: "ゲストではアカウント設定を使えません。続けて使うには、ログアウトしてから新規登録してください。"
