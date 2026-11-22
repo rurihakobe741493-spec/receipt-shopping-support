@@ -180,4 +180,46 @@ RSpec.describe "ReceiptScans", type: :request do
       expect(response).to redirect_to(new_user_session_path)
     end
   end
+
+  describe "ゲストの読み取りの回数" do
+    # 画像なしで送る。回数は画像の確かめより前で数えるので、Vision API を呼ばずに回数を進められる
+    def no_image_message
+      I18n.t("activemodel.errors.models.receipt_scan_form.attributes.image.no_image")
+    end
+
+    it "ゲストは決めた回数まで画像の確かめに進み、その次は読み取らずに上限の知らせを出す" do
+      expect(ReceiptOcrService).not_to receive(:call)
+      sign_in create(:user, guest: true)
+      ReceiptScansController::GUEST_SCANS_PER_GUEST.times do
+        post receipt_scans_path
+        expect(flash[:alert]).to eq(no_image_message)
+      end
+
+      post receipt_scans_path
+
+      expect(response).to have_http_status(303)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.guest_limit", count: ReceiptScansController::GUEST_SCANS_PER_GUEST))
+    end
+
+    it "ふつうのユーザーは、ゲストの回数を超えても止めない" do
+      sign_in user
+      (ReceiptScansController::GUEST_SCANS_PER_GUEST + 1).times { post receipt_scans_path }
+
+      expect(flash[:alert]).to eq(no_image_message)
+    end
+
+    it "ゲスト全体の1日の回数を超えると、別のゲストでも上限の知らせを出す" do
+      ReceiptScansController::GUEST_SCANS_PER_DAY.times do
+        sign_in create(:user, guest: true)
+        post receipt_scans_path
+      end
+      sign_in create(:user, guest: true)
+
+      post receipt_scans_path
+
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(I18n.t("receipt_scans.create.guests_daily_limit"))
+    end
+  end
 end

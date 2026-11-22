@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  devise_for :users
+  # アカウント設定（ゲストを止める）とログイン（ゲストでログインする）は、受け継いだコントローラーで受ける
+  devise_for :users, controllers: { registrations: "users/registrations", sessions: "users/sessions" }
+  devise_scope :user do
+    post "users/guest_sign_in", to: "users/sessions#guest_sign_in", as: :guest_sign_in
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

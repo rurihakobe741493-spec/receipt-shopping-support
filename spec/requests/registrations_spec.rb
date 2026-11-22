@@ -193,4 +193,44 @@ RSpec.describe "Registrations", type: :request do
       expect(response.body).not_to have_css("header a[href='#{edit_user_registration_path}']")
     end
   end
+
+  describe "ゲスト" do
+    let(:guest) { create(:user, guest: true) }
+
+    it "アカウント設定の画面を開くと、トップへ戻して知らせを出す" do
+      sign_in guest
+      get edit_user_registration_path
+
+      expect(response).to have_http_status(303)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(I18n.t("users.registrations.guest_not_allowed"))
+    end
+
+    it "メールアドレスを変えようとしても、変えずにトップへ戻す" do
+      sign_in guest
+      put user_registration_path, params: { user: { email: "changed@example.com", current_password: guest.password } }
+
+      expect(response).to have_http_status(303)
+      expect(response).to redirect_to(root_path)
+      expect(guest.reload.email).not_to eq("changed@example.com")
+    end
+
+    it "退会しようとしても、消さずにトップへ戻す" do
+      sign_in guest
+      delete user_registration_path
+
+      expect(response).to have_http_status(303)
+      expect(response).to redirect_to(root_path)
+      expect(User.exists?(guest.id)).to be true
+    end
+
+    it "ヘッダーには、アカウント設定のリンクの代わりに「ゲスト」の印とログアウトを出す" do
+      sign_in guest
+      get root_path
+
+      expect(response.body).not_to have_css("header a[href='#{edit_user_registration_path}']")
+      expect(response.body).to have_css("header span", text: I18n.t("shared.header.guest"))
+      expect(response.body).to have_css("header form[action='#{destroy_user_session_path}']")
+    end
+  end
 end
