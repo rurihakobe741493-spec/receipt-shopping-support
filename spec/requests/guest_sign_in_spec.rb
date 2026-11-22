@@ -26,6 +26,17 @@ RSpec.describe "GuestSignIn", type: :request do
       end
     end
 
+    it "残しておく時間を過ぎたゲストを、見本の品目ごと消す" do
+      expired_guest = GuestUserCreator.call
+      expired_guest.update!(created_at: 25.hours.ago)
+      item_ids = expired_guest.items.ids
+
+      post guest_sign_in_path
+
+      expect(User.exists?(expired_guest.id)).to be false
+      expect(Item.where(id: item_ids)).to be_empty
+    end
+
     it "ログイン中なら、ゲストを作らずにトップへ戻す" do
       sign_in create(:user)
 
@@ -44,6 +55,27 @@ RSpec.describe "GuestSignIn", type: :request do
       expect(response).to have_http_status(303)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(I18n.t("users.sessions.guest_sign_in.too_many"))
+    end
+  end
+
+  describe "DELETE /users/sign_out" do
+    it "ゲストがログアウトすると、そのゲストを品目ごと消し、トップへ戻す" do
+      post guest_sign_in_path
+      guest = User.find_by!(guest: true)
+      item_ids = guest.items.ids
+
+      expect { delete destroy_user_session_path }.to change(User, :count).by(-1)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:notice]).to eq(I18n.t("devise.sessions.signed_out"))
+      expect(Item.where(id: item_ids)).to be_empty
+    end
+
+    it "ふつうのユーザーがログアウトしても、ユーザーは消さない" do
+      user = create(:user)
+      sign_in user
+
+      expect { delete destroy_user_session_path }.not_to change(User, :count)
+      expect(User.exists?(user.id)).to be true
     end
   end
 end

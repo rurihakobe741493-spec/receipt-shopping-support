@@ -14,4 +14,14 @@ class Users::SessionsController < Devise::SessionsController
     sign_in(GuestUserCreator.call)
     redirect_to root_path, notice: t(".signed_in"), status: :see_other
   end
+
+  # ゲストがログアウトしたら、そのゲストを品目ごと消す（ログアウトすると、二度とそのゲストに入れないため）
+  # Devise の destroy は、ログアウトして知らせを入れたあと、応答の前にブロックを呼ぶ
+  def destroy
+    # 品目ごとに購入記録を1回ずつ読まないよう、まとめて読んでから消す（N+1 を避ける）
+    guest = User.includes(items: :purchases).find(current_user.id) if current_user&.guest?
+    super do
+      guest&.destroy
+    end
+  end
 end

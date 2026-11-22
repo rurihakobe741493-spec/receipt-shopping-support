@@ -16,8 +16,9 @@ class GuestUserCreator
   end
 
   def call
-    # 1件ずつ destroy するので、品目と購入記録も消える（dependent: :destroy）
-    User.expired_guests.find_each(&:destroy)
+    # 1件ずつ destroy するので、品目と購入記録も消える（dependent: :destroy）。
+    # 品目ごとに購入記録を1回ずつ読まないよう、まとめて読んでおく（N+1 を避ける）
+    User.expired_guests.includes(items: :purchases).find_each(&:destroy)
 
     ActiveRecord::Base.transaction do
       user = User.create!(
