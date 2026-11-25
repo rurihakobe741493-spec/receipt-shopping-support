@@ -1,5 +1,17 @@
 # app/controllers/receipt_scans_controller.rb
 class ReceiptScansController < ApplicationController
+  # ゲストの読み取りの回数（Vision API の無料枠を守るため）
+  GUEST_SCANS_PER_GUEST = 3
+  GUEST_SCANS_PER_DAY = 20
+
+  # 画像の確かめより前で数える（選び間違えた画像も1回に数える。手元では Vision API を呼ばずに上限を確かめられる）
+  # 1人あたりを先に数える（上限に達したゲストの送信で、ゲスト全体の回数を減らさないように）
+  rate_limit to: GUEST_SCANS_PER_GUEST, within: User::GUEST_LIFETIME, by: -> { current_user.id }, name: "guest",
+             with: -> { redirect_to root_path, alert: t(".guest_limit", count: GUEST_SCANS_PER_GUEST), status: :see_other },
+             only: :create, if: -> { current_user.guest? }
+  rate_limit to: GUEST_SCANS_PER_DAY, within: 1.day, by: -> { "all" }, name: "all_guests",
+             with: -> { redirect_to root_path, alert: t(".guests_daily_limit"), status: :see_other },
+             only: :create, if: -> { current_user.guest? }
   before_action :check_image
 
   def create

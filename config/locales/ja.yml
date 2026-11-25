@@ -65,8 +65,12 @@ ja:
       sign_out: "ログアウト"
       sign_in: "ログイン"
       sign_up: "新規登録"
+      guest: "ゲスト"
     flash:
       close: "知らせを閉じる"
+    guest_sign_in:
+      button: "ゲストで試す"
+      note: "登録なしで試せます。データは24時間で消えます"
   static_pages:
     top:
       catch_html: "レシートを撮るだけ。<br>あとは考えなくていい。"
@@ -84,6 +88,12 @@ ja:
           body: "消費ペースから目安の日を見積もる"
       start: "使ってみる"
   devise:
+    sessions:
+      new:
+        title: "ログイン"
+        submit: "ログインする"
+        sign_up: "新規登録はこちら"
+        or: "または"
     registrations:
       edit:
         title: "アカウント設定"
@@ -158,6 +168,8 @@ ja:
       no_text: "レシートの文字を読み取れませんでした。明るい場所で、レシート全体を画面いっぱいに写して撮り直してください。"
       no_item_lines: "レシートから品目を見つけられませんでした。レシート全体を画面いっぱいに写して撮り直してください。"
       ocr_error: "読み取りの途中で問題が起きました。少し時間をおいて、もう一度お試しください。続くときは、レシートを撮り直してください。"
+      guest_limit: "ゲストで読み取れるのは%{count}回までです。続けて使うには、ログアウトしてから新規登録してください。"
+      guests_daily_limit: "ゲストの読み取りが、今日の上限に達しました。時間をおいて試すか、新規登録してください。"
     result:
       title: "読み取り結果の確認"
       purchased_on_missing: "購入日を読み取れませんでした。購入日の欄に、レシートの日付を入れてください。今日の日付が入っていたら、レシートの日付と同じか確かめてください。"
@@ -179,3 +191,10 @@ ja:
     create:
       success: "%{count}件の購入記録を登録しました。"
       success_with_new_items: "新しいストックを%{new_items_count}件作り、%{count}件の購入記録を登録しました。"
+  users:
+    sessions:
+      guest_sign_in:
+        signed_in: "ゲストとしてログインしました。データは24時間で消えます。"
+        too_many: "ゲストを作る回数が上限に達しました。時間をおいて試してください。"
+    registrations:
+      guest_not_allowed: "ゲストではアカウント設定を使えません。続けて使うには、ログアウトしてから新規登録してください。"
